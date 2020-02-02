@@ -1,0 +1,38 @@
+sprite abstract class:
+	common methods for dealing with a movable character
+	saves x, y of the character
+	allows drawing of the character
+	has collision methods that deal with jousting
+	Starting position
+	update method
+	Killed method
+Sprite controller interface:
+	deals with moving the sprite via some different methods
+projectile extends sprite:
+	deals with the projectiles that are shot from an enemy
+	uses the collision stuff from sprite, has very simple sprite controller (will use an Anomynous class most likely)
+	has infinitely higher joust hieght than others
+Enemy Type 1 Movement class implements Sprite controller:
+	provides AI movement for the enemy sprites
+	needs to be given player positions most likely
+Enemy Abstract extends sprite:
+	Default constructor that makes a new random enemy
+	deals with common traits that enemies have:
+		spawning eggs
+		increases score of player when killed
+Egg class extends sprite:
+	has infinitely low jousting hieght compared to player
+	after x time spawns new Enemy
+	increases player score upon being killed
+Enemy Type 2 Movement class implements Sprite controller:
+	provides AI movement for the enemy sprites
+	needs to be given player positions most likely
+Enemy Type 1 extends Enemy:
+	only does jousting
+Enemy Type 2 extends Enemy:
+	does shooting
+Hero extends Sprite:
+	is the player
+keyboard movement extends sprite controller:
+	allows for sprite to be controlled via keyboard
+ 
