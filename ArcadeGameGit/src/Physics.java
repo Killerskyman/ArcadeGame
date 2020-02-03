@@ -1,4 +1,4 @@
-import javax.swing.*;
+import java.awt.*;
 
 public abstract class Physics{
     private double x;
@@ -63,4 +63,6 @@ public abstract class Physics{
     public double getHeight(){
         return height;
     }
+    
+    public abstract void drawOn(Graphics2D g);
 }
