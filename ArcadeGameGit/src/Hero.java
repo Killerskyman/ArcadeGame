@@ -1,7 +1,7 @@
-public class Hero extends Sprite {
-    
+public class Hero extends Sprite{
     public Hero(double fallAccel, double x, double y) {
         super(fallAccel, x, y);
+        addMover(new UserMovement(this));
     }
     
     @Override
