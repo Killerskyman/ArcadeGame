@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
 public class LevelPlatform extends Physics {
     
@@ -8,11 +9,11 @@ public class LevelPlatform extends Physics {
     
     @Override
     public void physicsCollision(Physics p, PointCollide pointOtherPhysics) {
-    
+        p.setFalling(false);
     }
     
     @Override
     public void drawOn(Graphics2D g) {
-    
+        g.fill(new Rectangle2D.Double(getX(), getY(),getWidth(), getHeight()));
     }
 }
