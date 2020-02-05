@@ -13,6 +13,7 @@ public class Level extends JComponent {
     
     public Level(String filename){
         File newFile = new File("testLvl.txt");
+        System.out.println(newFile.getPath());
         try {
             newFile.createNewFile();
         }catch(IOException e) {
