@@ -22,6 +22,12 @@ public abstract class Physics{
         this.y = y;
         this.fallAccel = fallAccel;
     }
+    
+    public Physics(double fallAccel, double x, double y, double width, double height){
+        this(fallAccel, x, y);
+        this.width = width;
+        this.height = height;
+    }
 
     public PointCollide doesCollideWith(Physics p){
         PointCollide doesContain = PointCollide.NAC;

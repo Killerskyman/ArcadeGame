@@ -19,7 +19,9 @@ public class Main {
 	ArrayList<Sprite> sprites = new ArrayList<>();
 	
 	public void Main(){
-	
+	    physics.add(new LevelPlatform(0, 300, 1000, 30));
+	    physics.add(new Hero(-2, 50, 50));
+	    
 	}
  
 }
