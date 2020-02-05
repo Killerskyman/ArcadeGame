@@ -19,7 +19,7 @@ public class Main {
 	ArrayList<Sprite> sprites = new ArrayList<>();
 	
 	public void Main(){
-        new Level("test");
+	
 	}
  
 }
