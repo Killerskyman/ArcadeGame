@@ -4,9 +4,11 @@ import java.awt.geom.Rectangle2D;
 public abstract class Sprite extends Physics {
 
     private static final double PERCENTMOVEPHYSICS = 0.5;
+    private Movement mover;
+    public boolean isDead = false;
 
-    public Sprite(double fallAccel) {
-        super(fallAccel);
+    public Sprite(double fallAccel, double x, double y) {
+        super(fallAccel, x, y);
     }
     
     @Override
@@ -17,12 +19,20 @@ public abstract class Sprite extends Physics {
         }
         if(!continuePhysics) return;
         if(pointOtherPhysics == PointCollide.UL){
-            this.setX(this.getX()-PERCENTMOVEPHYSICS*(this.getWidth()-(p.getX()-this.getX())));
-            this.setY(this.getY()-PERCENTMOVEPHYSICS*(this.getHeight()-(p.getY()-this.getY())));
+            this.setX(this.getX()-PERCENTMOVEPHYSICS*(this.getRightX()-p.getX()));
+            this.setY(this.getY()-PERCENTMOVEPHYSICS*(this.getLowerY()-p.getY()));
         }
         if(pointOtherPhysics == PointCollide.UR){
-            this.setX(this.getX()+PERCENTMOVEPHYSICS*(this.getWidth()-(p.getRightX()-this.getX())));
-            this.setY(this.getY()-PERCENTMOVEPHYSICS*(this.getHeight()-(p.getY()-this.getY())));
+            this.setX(this.getX()+PERCENTMOVEPHYSICS*(p.getRightX()-this.getX()));
+            this.setY(this.getY()-PERCENTMOVEPHYSICS*(this.getLowerY()-p.getY()));
+        }
+        if(pointOtherPhysics == PointCollide.LR){
+            this.setX(this.getX()+PERCENTMOVEPHYSICS*(p.getRightX()-this.getX()));
+            this.setY(this.getY()+PERCENTMOVEPHYSICS*(p.getLowerY()-this.getY()));
+        }
+        if(pointOtherPhysics == PointCollide.LR){
+            this.setX(this.getX()-PERCENTMOVEPHYSICS*(this.getRightX()-p.getX()));
+            this.setY(this.getY()+PERCENTMOVEPHYSICS*(p.getLowerY()-this.getY()));
         }
     }
     
@@ -33,10 +43,16 @@ public abstract class Sprite extends Physics {
 
     public abstract void spawning();
 
-    public void updateMovement(int x, int vely){
-        setX(x);
-        setJumpVely(vely);
+    public void updateMovement(){
+        mover.updatePos();
+    }
+    
+    public void addMover(Movement mover){
+        this.mover = mover;
+        mover.setSprite(this);
     }
 
     public abstract boolean interactsWith(Sprite otherSprite);
+    public abstract double getJoustHeight();
+    public abstract void death();
 }
