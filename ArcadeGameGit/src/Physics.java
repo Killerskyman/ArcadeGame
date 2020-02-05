@@ -3,26 +3,34 @@ import java.awt.*;
 public abstract class Physics{
     private double x;
     private double y;
-    private double height;
-    private double width;
-    private boolean isFalling;
-    private double vely;
+    private double height = 40;
+    private double width = 40;
+    private boolean isFalling = true;
+    private double vely = 0;
     private double fallAccel;
 
-    public Physics(double fallAccel){
+    public Physics(double fallAccel, double x, double y){
+        this.x = x;
+        this.y = y;
         this.fallAccel = fallAccel;
     }
-
-    public boolean doesCollideWith(Physics p){
-        boolean doesContain = false;
-        if(this.contains(p.getX(), p.getY())) doesContain = true;
-        else if(this.contains(p.getX(), p.getY()+p.getHeight())) doesContain = true;
-        else if(this.contains(p.getX()+p.getWidth(), p.getY()+p.getHeight())) doesContain = true;
-        else if(this.contains(p.getX()+p.getWidth(), p.getY())) doesContain = true;
-        return doesContain;
+    
+    public Physics(double fallAccel, double x, double y, double width, double height){
+        this(fallAccel, x, y);
+        this.width = width;
+        this.height = height;
     }
 
-    public abstract void physicsCollision(Physics p);
+    public boolean[] doesCollideWith(Physics p){
+        boolean[] pointCols = new boolean[4];
+        if(p.contains(getX(), getY())) pointCols[0] = true;
+        if(p.contains(getRightX(), getY())) pointCols[1] = true;
+        if(p.contains(getRightX(), getLowerY())) pointCols[2] = true;
+        if(p.contains(getX(), getLowerY())) pointCols[3] = true;
+        return pointCols;
+    }
+
+    public abstract void physicsCollision(Physics p, boolean[] pointOtherPhysics);
 
     public void setFalling(boolean isFalling){
         this.isFalling = isFalling;
@@ -62,6 +70,26 @@ public abstract class Physics{
 
     public double getHeight(){
         return height;
+    }
+
+    public void setX(double x){
+        this.x = x;
+    }
+
+    public void setY(double y){
+        this.y = y;
+    }
+
+    public double getRightX(){
+        return getX()+getWidth();
+    }
+
+    public double getLowerY(){
+        return getY()+getHeight();
+    }
+
+    public void setJumpVely(double vely){
+        updatePos(vely);
     }
     
     public abstract void drawOn(Graphics2D g);
