@@ -9,14 +9,6 @@ public abstract class Physics{
     private double vely;
     private double fallAccel;
 
-    public enum PointCollide{
-        UL,
-        UR,
-        LL,
-        LR,
-        NAC
-    }
-
     public Physics(double fallAccel, double x, double y){
         this.x = x;
         this.y = y;
@@ -29,16 +21,16 @@ public abstract class Physics{
         this.height = height;
     }
 
-    public PointCollide doesCollideWith(Physics p){
-        PointCollide doesContain = PointCollide.NAC;
-        if(this.contains(p.getX(), p.getY())) doesContain = PointCollide.UL;
-        else if(this.contains(p.getX(), p.getY()+p.getHeight())) doesContain = PointCollide.LL;
-        else if(this.contains(p.getX()+p.getWidth(), p.getY()+p.getHeight())) doesContain = PointCollide.LR;
-        else if(this.contains(p.getX()+p.getWidth(), p.getY())) doesContain = PointCollide.UR;
-        return doesContain;
+    public boolean[] doesCollideWith(Physics p){
+        boolean[] pointCols = new boolean[4];
+        if(p.contains(getX(), getY())) pointCols[0] = true;
+        else if(p.contains(getX(), getLowerY())) pointCols[1] = true;
+        else if(p.contains(getRightX(), getLowerY())) pointCols[2] = true;
+        else if(p.contains(getRightX(), getY())) pointCols[3] = true;
+        return pointCols;
     }
 
-    public abstract void physicsCollision(Physics p, PointCollide pointOtherPhysics);
+    public abstract void physicsCollision(Physics p, boolean[] pointOtherPhysics);
 
     public void setFalling(boolean isFalling){
         this.isFalling = isFalling;
