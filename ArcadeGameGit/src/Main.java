@@ -13,7 +13,7 @@ public class Main {
 		new Main();
 	}
 
-	public void Main(){
+	public Main(){
         new Level("test");
 	}
  
