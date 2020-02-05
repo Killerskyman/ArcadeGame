@@ -1,9 +1,15 @@
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class Movement implements ActionListener {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
+public abstract class Movement{
+    
+    private Sprite sprite;
+    
+    public Movement(Sprite sprite){
+        this.sprite = sprite;
+    }
+    
+    public abstract void updatePos();
+    
+    public void setSprite(Sprite sprite) {
+        this.sprite = sprite;
     }
 }
