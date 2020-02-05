@@ -3,8 +3,8 @@ import java.awt.*;
 public abstract class Physics{
     private double x;
     private double y;
-    private double height;
-    private double width;
+    private double height = 40;
+    private double width = 40;
     public boolean isFalling;
     private double vely;
     private double fallAccel;
@@ -17,7 +17,9 @@ public abstract class Physics{
         NAC
     }
 
-    public Physics(double fallAccel){
+    public Physics(double fallAccel, double x, double y){
+        this.x = x;
+        this.y = y;
         this.fallAccel = fallAccel;
     }
 
