@@ -63,6 +63,10 @@ public abstract class Sprite extends Physics {
         this.mover = mover;
         mover.setSprite(this);
     }
+    
+    public Movement getMover(){
+        return mover;
+    }
 
     public abstract boolean interactsWith(Sprite otherSprite);
     public abstract double getJoustHeight();

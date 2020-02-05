@@ -2,7 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * TODO:make a good comment here
@@ -19,20 +21,30 @@ public class Main {
 		new Main();
 	}
  
-	ArrayList<Physics> physics = new ArrayList<>();
-	ArrayList<Sprite> sprites = new ArrayList<>();
+	private ArrayList<Physics> physics = new ArrayList<>();
+	private ArrayList<Sprite> sprites = new ArrayList<>();
+	private HashMap<Integer, ActionListener> keyActions = new HashMap<>();
+	private HashMap<Integer, Boolean> keyStates = new HashMap<>();
 	
 	public Main(){
+	    Hero player = new Hero(0.5, 50, 50);
 	    physics.add(new LevelPlatform(0, 300, 1000, 30));
-	    physics.add(new Hero(0.5, 50, 50));
-	    physics.get(1).setFalling(true);
+	    physics.add(player);
+		GameComponent gamecomp = new GameComponent(physics);
+	    ComponentInputMap inputMap = new ComponentInputMap(gamecomp);
+	    ActionMap actMap = new ActionMap();
+	    makeBinding(KeyEvent.VK_LEFT, player.getMover().getMovers().get(0), inputMap, actMap);
+	    makeBinding(KeyEvent.VK_RIGHT, player.getMover().getMovers().get(1), inputMap, actMap);
+	    makeBinding(KeyEvent.VK_UP, player.getMover().getMovers().get(2), inputMap, actMap);
+		gamecomp.setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW, inputMap);
+		gamecomp.setActionMap(actMap);
         JFrame frame = new JFrame();
         frame.setSize(1000, 600);
         frame.setTitle("physics test");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        GameComponent gamecomp = new GameComponent(physics);
         frame.add(gamecomp, BorderLayout.CENTER);
         Timer timer = new Timer(20, new GameTickList(gamecomp));
+        timer.addActionListener(new updateMove());
         timer.start();
         frame.setVisible(true);
 	}
@@ -50,6 +62,27 @@ public class Main {
         }
 	    for(Physics physic : physics){
 	        physic.updatePos();
+        }
+    }
+    
+    private void makeBinding(Integer keyCode, ActionListener action, InputMap inputMap, ActionMap actionMap){
+	    KeyStroke keyPress = KeyStroke.getKeyStroke(keyCode, 0, false);
+	    KeyStroke keyRel = KeyStroke.getKeyStroke(keyCode, 0, true);
+	    inputMap.put(keyPress, keyCode.toString()+" pressed");
+	    inputMap.put(keyRel, keyCode.toString()+" released");
+	    actionMap.put(keyCode.toString()+ " pressed", new KeyBind(keyCode, keyStates, true));
+        actionMap.put(keyCode.toString()+ " released", new KeyBind(keyCode, keyStates, false));
+        keyActions.put(keyCode, action);
+        keyStates.put(keyCode, false);
+    }
+    
+    private class updateMove implements ActionListener{
+    
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            for(Integer keyAction : keyActions.keySet()){
+                if(keyStates.get(keyAction))keyActions.get(keyAction).actionPerformed(e);
+            }
         }
     }
     

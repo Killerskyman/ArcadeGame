@@ -1,3 +1,7 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
 public class AIMovement extends Movement{
     public AIMovement(Sprite sprite) {
         super(sprite);
@@ -21,5 +25,10 @@ public class AIMovement extends Movement{
     @Override
     public void jump() {
     
+    }
+
+    @Override
+    public ArrayList<ActionListener> getMovers() {
+        return null;
     }
 }
