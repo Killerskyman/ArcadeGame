@@ -1,12 +1,12 @@
 import java.awt.*;
 
 public class LevelPlatform extends Physics {
-    public LevelPlatform() {
-        super(0);
+    public LevelPlatform(double x, double y) {
+        super(0, x, y);
     }
     
     @Override
-    public void physicsCollision(Physics p) {
+    public void physicsCollision(Physics p, PointCollide pointOtherPhysics) {
     
     }
     
