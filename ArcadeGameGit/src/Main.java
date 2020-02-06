@@ -20,11 +20,6 @@ public class Main {
 	public static void main(String[] args) {
 		new Main();
 	}
-<<<<<<< ArcadeGameGit/src/Main.java
-
-	public Main(){
-        new Level("test");
-=======
  
 	private ArrayList<Physics> physics = new ArrayList<>();
 	private ArrayList<Sprite> sprites = new ArrayList<>();
@@ -33,8 +28,17 @@ public class Main {
 	
 	public Main(){
 	    Hero player = new Hero(0.5, 50, 50);
-	    physics.add(new LevelPlatform(0, 300, 1000, 30));
+	    Level lvl1;
+		try {
+			lvl1 = new Level("testLvl.txt");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
 	    physics.add(player);
+	    lvl1.spawnHero(player);
+	    lvl1.addPlatsToPhysics(physics);
 		GameComponent gamecomp = new GameComponent(physics);
 	    ComponentInputMap inputMap = new ComponentInputMap(gamecomp);
 	    ActionMap actMap = new ActionMap();
@@ -52,7 +56,6 @@ public class Main {
         timer.addActionListener(new updateMove());
         timer.start();
         frame.setVisible(true);
->>>>>>> ArcadeGameGit/src/Main.java
 	}
 	
 	public void updatePhysics(){
