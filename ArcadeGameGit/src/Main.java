@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,16 +42,47 @@ public class Main {
 	    makeBinding(KeyEvent.VK_LEFT, player.getMover().getMovers().get(0), inputMap, actMap);
 	    makeBinding(KeyEvent.VK_RIGHT, player.getMover().getMovers().get(1), inputMap, actMap);
 	    makeBinding(KeyEvent.VK_UP, player.getMover().getMovers().get(2), inputMap, actMap);
-	    makeBinding(KeyEvent.VK_U, e -> switchLevel(levels.get(0), levels.get(1), player), inputMap, actMap);
-	    makeBinding(KeyEvent.VK_D, e -> switchLevel(levels.get(1), levels.get(0), player), inputMap, actMap);
-		gamecomp.setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW, inputMap);
-		gamecomp.setActionMap(actMap);
+        gamecomp.setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW, inputMap);
+        gamecomp.setActionMap(actMap);
+	    gamecomp.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+            
+            }
+        
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_U) switchLevel(levels.get(0), levels.get(1), player);
+            }
+        
+            @Override
+            public void keyReleased(KeyEvent e) {
+            
+            }
+        });
+	    gamecomp.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+            
+            }
+        
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_D) switchLevel(levels.get(1), levels.get(0), player);
+            }
+        
+            @Override
+            public void keyReleased(KeyEvent e) {
+            
+            }
+        });
+	    gamecomp.setFocusable(true);
         JFrame frame = new JFrame();
         frame.setSize(1000, 600);
-        frame.setTitle("physics test");
+        frame.setTitle("Milestone 1 Test");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(gamecomp, BorderLayout.CENTER);
-        Timer timer = new Timer(10, new GameTickList(gamecomp));
+        Timer timer = new Timer(20, new GameTickList(gamecomp));
         timer.addActionListener(new updateMove());
         timer.start();
         frame.setVisible(true);
