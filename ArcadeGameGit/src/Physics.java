@@ -1,12 +1,16 @@
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 
 public abstract class Physics{
     private double x;
     private double y;
     private double height = 40;
     private double width = 40;
-    public boolean isFalling;
-    private double vely;
+    private boolean isFalling = true;
+    private double vely = 0;
     private double fallAccel;
 
     public Physics(double fallAccel, double x, double y){
@@ -24,9 +28,9 @@ public abstract class Physics{
     public boolean[] doesCollideWith(Physics p){
         boolean[] pointCols = new boolean[4];
         if(p.contains(getX(), getY())) pointCols[0] = true;
-        else if(p.contains(getX(), getLowerY())) pointCols[1] = true;
-        else if(p.contains(getRightX(), getLowerY())) pointCols[2] = true;
-        else if(p.contains(getRightX(), getY())) pointCols[3] = true;
+        if(p.contains(getRightX(), getY())) pointCols[1] = true;
+        if(p.contains(getRightX(), getLowerY())) pointCols[2] = true;
+        if(p.contains(getX(), getLowerY())) pointCols[3] = true;
         return pointCols;
     }
 
@@ -89,7 +93,9 @@ public abstract class Physics{
     }
 
     public void setJumpVely(double vely){
-        updatePos(vely);
+        if(!isFalling) {
+            updatePos(vely);
+        }
     }
     
     public abstract void drawOn(Graphics2D g);
