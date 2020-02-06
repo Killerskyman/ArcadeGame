@@ -28,20 +28,25 @@ public abstract class Sprite extends Physics {
         else if(pointOtherPhysics[3] && pointOtherPhysics[0])setX(getX()+PERCENTMOVEPHYSICS*(p.getRightX()-getX()));
         else {
             if(pointOtherPhysics[0]) {
-                this.setX(this.getX() + PERCENTMOVEPHYSICS * (p.getRightX() - this.getX()));
-                this.setY(this.getY() + PERCENTMOVEPHYSICS * (p.getLowerY() - this.getY()));
+                double deltaX = PERCENTMOVEPHYSICS * (p.getRightX() - this.getX());
+                double deltaY = PERCENTMOVEPHYSICS * (p.getLowerY() - this.getY());
+                if(deltaX > deltaY){
+                    this.setX(getX() + deltaX);
+                }else{
+                    this.setY(getY() + deltaY);
+                }
             }
             if(pointOtherPhysics[1]) {
-                this.setX(this.getX() - PERCENTMOVEPHYSICS * (this.getRightX() - p.getX()));
+                this.setX(this.getX() - Math.max(PERCENTMOVEPHYSICS * (p.getRightX() - this.getX()), 1));
                 this.setY(this.getY() + PERCENTMOVEPHYSICS * (p.getLowerY() - this.getY()));
             }
             if(pointOtherPhysics[2]) {
-                this.setX(this.getX() - PERCENTMOVEPHYSICS * (this.getRightX() - p.getX()));
+                this.setX(this.getX() - Math.max(PERCENTMOVEPHYSICS * (p.getRightX() - this.getX()), 1));
                 this.setY(this.getY() - PERCENTMOVEPHYSICS * (this.getLowerY() - p.getY()));
                 setFalling(false);
             }
             if(pointOtherPhysics[3]) {
-                this.setX(this.getX() + PERCENTMOVEPHYSICS * (p.getRightX() - this.getX()));
+                this.setX(this.getX() + Math.min(PERCENTMOVEPHYSICS * (p.getRightX() - this.getX()), 1));
                 this.setY(this.getY() - PERCENTMOVEPHYSICS * (this.getLowerY() - p.getY()));
                 setFalling(false);
             }
