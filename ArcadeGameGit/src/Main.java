@@ -4,13 +4,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
 /**
- * TODO:make a good comment here
+ * Main class, runs and setups up all the objects required to run the game
  * 
  * @author Skyler Cleland and Daniel Vega
  *
@@ -29,7 +28,10 @@ public class Main {
 	private HashMap<Integer, ActionListener> keyActions = new HashMap<>();
 	private HashMap<Integer, Boolean> keyStates = new HashMap<>();
 	private ArrayList<Level> levels = new ArrayList<>();
-	
+    
+    /**
+     * sets the game up by loading levels from files, spawning the player, binding the keys, and setting up physics relations
+     */
 	public Main(){
 	    Hero player = new Hero(0.5, 50, 50);
         physics.add(player);
@@ -88,6 +90,11 @@ public class Main {
         frame.setVisible(true);
 	}
     
+    /**
+     * loads the levels into the levels arrayList from the ArrayList of Strings
+     * @param levels arraylist to add the levels to
+     * @param strings arraylist contain all the filenames of the level txt files
+     */
     private void loadLevels(ArrayList<Level> levels, ArrayList<String> strings) {
         for(String filename : strings){
             try{
@@ -98,12 +105,21 @@ public class Main {
         }
     }
     
+    /**
+     * switches between the remove level and the add level
+     * @param remove level to remove from the screen
+     * @param add level to add to the screen
+     * @param player the player, used for spawning at correct location
+     */
     public void switchLevel(Level remove, Level add, Hero player){
 	    remove.removePlatsFromPhysics(physics);
 	    add.addPlatsToPhysics(physics);
 	    add.spawnHero(player);
     }
-	
+    
+    /**
+     * updates all objects in the physics arraylist by checking for collisions and updating their position
+     */
 	public void updatePhysics(){
 	    for(Physics checking : physics){
 	        boolean shouldNotFall = false;
@@ -122,6 +138,13 @@ public class Main {
         }
     }
     
+    /**
+     * makes a binding to a key that activates the action while the button is pressed
+     * @param keyCode keyCode of the button you want to bind
+     * @param action ActionListener that you want to activate while button is pressed
+     * @param inputMap the inputMap to add the keyBind to
+     * @param actionMap the actionMap to add the keyBind to
+     */
     private void makeBinding(Integer keyCode, ActionListener action, InputMap inputMap, ActionMap actionMap){
 	    KeyStroke keyPress = KeyStroke.getKeyStroke(keyCode, 0, false);
 	    KeyStroke keyRel = KeyStroke.getKeyStroke(keyCode, 0, true);
@@ -133,6 +156,9 @@ public class Main {
         keyStates.put(keyCode, false);
     }
     
+    /**
+     * ActionListener to update all the keybinds made from makeBinding
+     */
     private class updateMove implements ActionListener{
     
         @Override
@@ -143,6 +169,9 @@ public class Main {
         }
     }
     
+    /**
+     * ActionListener that ticks the game forward
+     */
     private class GameTickList implements ActionListener {
 	    
 	    GameComponent component;

@@ -1,3 +1,7 @@
+/**
+ * class that is the bullet from monster2
+ * WIP
+ */
 public class Bullet extends Sprite{
     
     public Bullet(double fallAccel, double x, double y) {

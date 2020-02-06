@@ -1,3 +1,7 @@
+/**
+ * class that is the egg
+ * WIP
+ */
 public class Egg extends Sprite{
     
     public Egg(double fallAccel, double x, double y) {
