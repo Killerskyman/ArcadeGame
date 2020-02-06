@@ -20,6 +20,11 @@ public class Main {
 	public static void main(String[] args) {
 		new Main();
 	}
+<<<<<<< ArcadeGameGit/src/Main.java
+
+	public Main(){
+        new Level("test");
+=======
  
 	private ArrayList<Physics> physics = new ArrayList<>();
 	private ArrayList<Sprite> sprites = new ArrayList<>();
@@ -47,6 +52,7 @@ public class Main {
         timer.addActionListener(new updateMove());
         timer.start();
         frame.setVisible(true);
+>>>>>>> ArcadeGameGit/src/Main.java
 	}
 	
 	public void updatePhysics(){
