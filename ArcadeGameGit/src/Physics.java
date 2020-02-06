@@ -1,4 +1,8 @@
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 
 public abstract class Physics{
     private double x;
@@ -89,7 +93,9 @@ public abstract class Physics{
     }
 
     public void setJumpVely(double vely){
-        updatePos(vely);
+        if(!isFalling) {
+            updatePos(vely);
+        }
     }
     
     public abstract void drawOn(Graphics2D g);
