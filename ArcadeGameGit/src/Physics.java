@@ -34,10 +34,14 @@ public abstract class Physics{
         return pointCols;
     }
 
-    public abstract void physicsCollision(Physics p, boolean[] pointOtherPhysics);
+    public abstract boolean physicsCollision(Physics p, boolean[] pointOtherPhysics);
 
     public void setFalling(boolean isFalling){
         this.isFalling = isFalling;
+    }
+    
+    public boolean getFalling(){
+        return isFalling;
     }
 
     public void updatePos(double velyOveride){

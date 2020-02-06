@@ -8,8 +8,9 @@ public class LevelPlatform extends Physics {
     }
     
     @Override
-    public void physicsCollision(Physics p, boolean[] pointOtherPhysics) {
+    public boolean physicsCollision(Physics p, boolean[] pointOtherPhysics) {
         setFalling(false);
+        return false;
     }
     
     @Override

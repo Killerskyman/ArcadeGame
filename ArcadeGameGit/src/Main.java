@@ -3,7 +3,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -25,26 +27,22 @@ public class Main {
 	private ArrayList<Sprite> sprites = new ArrayList<>();
 	private HashMap<Integer, ActionListener> keyActions = new HashMap<>();
 	private HashMap<Integer, Boolean> keyStates = new HashMap<>();
+	private ArrayList<Level> levels = new ArrayList<>();
 	
 	public Main(){
 	    Hero player = new Hero(0.5, 50, 50);
-	    Level lvl1;
-		try {
-			lvl1 = new Level("testLvl.txt");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		}
-	    physics.add(player);
-	    lvl1.spawnHero(player);
-	    lvl1.addPlatsToPhysics(physics);
+        physics.add(player);
+	    loadLevels(levels, new ArrayList<>(Arrays.asList("testLvl.txt", "New Text Document.txt")));
+	    levels.get(0).spawnHero(player);
+	    levels.get(0).addPlatsToPhysics(physics);
 		GameComponent gamecomp = new GameComponent(physics);
 	    ComponentInputMap inputMap = new ComponentInputMap(gamecomp);
 	    ActionMap actMap = new ActionMap();
 	    makeBinding(KeyEvent.VK_LEFT, player.getMover().getMovers().get(0), inputMap, actMap);
 	    makeBinding(KeyEvent.VK_RIGHT, player.getMover().getMovers().get(1), inputMap, actMap);
 	    makeBinding(KeyEvent.VK_UP, player.getMover().getMovers().get(2), inputMap, actMap);
+	    makeBinding(KeyEvent.VK_U, e -> switchLevel(levels.get(0), levels.get(1), player), inputMap, actMap);
+	    makeBinding(KeyEvent.VK_D, e -> switchLevel(levels.get(1), levels.get(0), player), inputMap, actMap);
 		gamecomp.setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW, inputMap);
 		gamecomp.setActionMap(actMap);
         JFrame frame = new JFrame();
@@ -52,22 +50,40 @@ public class Main {
         frame.setTitle("physics test");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(gamecomp, BorderLayout.CENTER);
-        Timer timer = new Timer(20, new GameTickList(gamecomp));
+        Timer timer = new Timer(50, new GameTickList(gamecomp));
         timer.addActionListener(new updateMove());
         timer.start();
         frame.setVisible(true);
 	}
+    
+    private void loadLevels(ArrayList<Level> levels, ArrayList<String> strings) {
+        for(String filename : strings){
+            try{
+                levels.add(new Level(filename));
+            }catch(Exception e){
+                System.err.println("FAILED TO LOAD LEVEL FROM FILE: " + filename);
+            }
+        }
+    }
+    
+    public void switchLevel(Level remove, Level add, Hero player){
+	    remove.removePlatsFromPhysics(physics);
+	    add.addPlatsToPhysics(physics);
+	    add.spawnHero(player);
+    }
 	
 	public void updatePhysics(){
 	    for(Physics checking : physics){
+	        boolean shouldNotFall = false;
 	        for(Physics checker : physics){
 	            if(checking != checker){
 	                boolean[] col = checking.doesCollideWith(checker);
-	                checking.physicsCollision(checker, col);
+	                shouldNotFall = shouldNotFall || !checking.physicsCollision(checker, col);
 	                boolean[] opcol = {col[2], col[3], col[0], col[1]};
 	                checker.physicsCollision(checking, opcol);
                 }
             }
+	        checking.setFalling(!shouldNotFall);
         }
 	    for(Physics physic : physics){
 	        physic.updatePos();

@@ -33,15 +33,18 @@ public class Level extends JComponent {
     }
     
     public void addPlatsToPhysics(ArrayList<Physics> input){
-    	
-    	for (LevelPlatform plat : platforms) {
-    		input.add(plat);
-    	}
+        input.addAll(platforms);
+    }
+    
+    public void removePlatsFromPhysics(ArrayList<Physics> physics){
+        physics.removeAll(platforms);
     }
     
     public void spawnHero(Hero player) {
     	player.setX(heroSpawnX);
     	player.setY(heroSpawnY);
+    	player.setFalling(false);
+    	player.updatePos(0);
     }
     
     @Override

@@ -3,7 +3,7 @@ import java.awt.geom.Rectangle2D;
 
 public abstract class Sprite extends Physics {
 
-    private static final double PERCENTMOVEPHYSICS = 0.5;
+    private static final double PERCENTMOVEPHYSICS = 0.99;
     private Movement mover;
     public boolean isDead = false;
 
@@ -12,18 +12,18 @@ public abstract class Sprite extends Physics {
     }
     
     @Override
-    public void physicsCollision(Physics p, boolean[] pointOtherPhysics) {
+    public boolean physicsCollision(Physics p, boolean[] pointOtherPhysics) {
         boolean continuePhysics = true;
         if(p.getClass() == this.getClass()){
             continuePhysics = this.interactsWith((Sprite) p);
         }
-        if(!continuePhysics) return;
-        setFalling(true);
+        if(!continuePhysics) return getFalling();
+        boolean shouldFall = true;
         if(pointOtherPhysics[0] && pointOtherPhysics[1])setY(getY()+PERCENTMOVEPHYSICS*(p.getLowerY()-getY()));
         else if(pointOtherPhysics[1] && pointOtherPhysics[2])setX(getX()-PERCENTMOVEPHYSICS*(p.getX()-getRightX()));
         else if(pointOtherPhysics[2] && pointOtherPhysics[3]){
             setY(getY()-PERCENTMOVEPHYSICS*(getLowerY()-p.getY()));
-            setFalling(false);
+            shouldFall = false;
         }
         else if(pointOtherPhysics[3] && pointOtherPhysics[0])setX(getX()+PERCENTMOVEPHYSICS*(p.getRightX()-getX()));
         else {
@@ -53,7 +53,7 @@ public abstract class Sprite extends Physics {
                 }else{
                     setY(getY() - deltaY);
                 }
-                setFalling(false);
+                shouldFall = false;
             }
             if(pointOtherPhysics[3]) {
                 double deltaX = PERCENTMOVEPHYSICS * (p.getRightX() - this.getX());
@@ -63,9 +63,10 @@ public abstract class Sprite extends Physics {
                 }else{
                     setY(getY() - deltaY);
                 }
-                setFalling(false);
+                shouldFall = false;
             }
         }
+        return shouldFall;
     }
     
     @Override
