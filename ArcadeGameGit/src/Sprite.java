@@ -30,24 +30,39 @@ public abstract class Sprite extends Physics {
             if(pointOtherPhysics[0]) {
                 double deltaX = PERCENTMOVEPHYSICS * (p.getRightX() - this.getX());
                 double deltaY = PERCENTMOVEPHYSICS * (p.getLowerY() - this.getY());
-                if(deltaX > deltaY){
+                if(deltaX < deltaY){
                     this.setX(getX() + deltaX);
                 }else{
                     this.setY(getY() + deltaY);
                 }
             }
             if(pointOtherPhysics[1]) {
-                this.setX(this.getX() - Math.max(PERCENTMOVEPHYSICS * (p.getRightX() - this.getX()), 1));
-                this.setY(this.getY() + PERCENTMOVEPHYSICS * (p.getLowerY() - this.getY()));
+                double deltaX = PERCENTMOVEPHYSICS * (this.getRightX() - p.getX());
+                double deltaY = PERCENTMOVEPHYSICS * (p.getLowerY() - this.getY());
+                if(deltaX < deltaY){
+                    this.setX(getX() - deltaX);
+                }else{
+                    setY(getY() + deltaY);
+                }
             }
             if(pointOtherPhysics[2]) {
-                this.setX(this.getX() - Math.max(PERCENTMOVEPHYSICS * (p.getRightX() - this.getX()), 1));
-                this.setY(this.getY() - PERCENTMOVEPHYSICS * (this.getLowerY() - p.getY()));
+                double deltaX = PERCENTMOVEPHYSICS * (this.getRightX() - p.getX());
+                double deltaY = PERCENTMOVEPHYSICS * (this.getLowerY() - p.getY());
+                if(deltaX < deltaY){
+                    this.setX(getX() - deltaX);
+                }else{
+                    setY(getY() - deltaY);
+                }
                 setFalling(false);
             }
             if(pointOtherPhysics[3]) {
-                this.setX(this.getX() + Math.min(PERCENTMOVEPHYSICS * (p.getRightX() - this.getX()), 1));
-                this.setY(this.getY() - PERCENTMOVEPHYSICS * (this.getLowerY() - p.getY()));
+                double deltaX = PERCENTMOVEPHYSICS * (p.getRightX() - this.getX());
+                double deltaY = PERCENTMOVEPHYSICS * (this.getLowerY() - p.getY());
+                if(deltaX < deltaY){
+                    this.setX(getX() + deltaX);
+                }else{
+                    setY(getY() - deltaY);
+                }
                 setFalling(false);
             }
         }
