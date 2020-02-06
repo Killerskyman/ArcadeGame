@@ -5,8 +5,8 @@ import java.util.Arrays;
 
 public class UserMovement extends Movement {
     
-    private static final double horzMovSpeed = 5;
-    private static final double jumpVel = 10;
+    private static final double horzMovSpeed = 7;
+    private static final double jumpVel = 20;
     private UsrMoveLeftList moverLeft = new UsrMoveLeftList();
     private UsrMoveRightList moverRight = new UsrMoveRightList();
     private UsrJumpList moverJump = new UsrJumpList();

@@ -50,7 +50,7 @@ public class Main {
         frame.setTitle("physics test");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(gamecomp, BorderLayout.CENTER);
-        Timer timer = new Timer(50, new GameTickList(gamecomp));
+        Timer timer = new Timer(10, new GameTickList(gamecomp));
         timer.addActionListener(new updateMove());
         timer.start();
         frame.setVisible(true);

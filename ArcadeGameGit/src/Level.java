@@ -16,7 +16,7 @@ public class Level extends JComponent {
     
     public Level(String filename) throws Exception{
         
-        BufferedReader sc = new BufferedReader(new FileReader("testLvl.txt"));
+        BufferedReader sc = new BufferedReader(new FileReader(filename));
         heroSpawn = sc.readLine();
         String[] heroArgs = heroSpawn.split(";");
         heroSpawnX = Integer.parseInt(heroArgs[0]);
@@ -37,7 +37,9 @@ public class Level extends JComponent {
     }
     
     public void removePlatsFromPhysics(ArrayList<Physics> physics){
-        physics.removeAll(platforms);
+        for(Physics plat : platforms){
+            physics.remove(plat);
+        }
     }
     
     public void spawnHero(Hero player) {
