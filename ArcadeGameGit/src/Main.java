@@ -22,12 +22,13 @@ public class Main {
 	public static void main(String[] args) {
 		new Main();
 	}
- 
-	private ArrayList<Physics> physics = new ArrayList<>();
+
+	//TODO: adjust init values of arraylists as program expands
+	private ArrayList<Physics> physics = new ArrayList<>(15);
 	private ArrayList<Sprite> sprites = new ArrayList<>();
-	private HashMap<Integer, ActionListener> keyActions = new HashMap<>();
-	private HashMap<Integer, Boolean> keyStates = new HashMap<>();
-	private ArrayList<Level> levels = new ArrayList<>();
+	private HashMap<Integer, ActionListener> keyActions = new HashMap<>(5);
+	private HashMap<Integer, Boolean> keyStates = new HashMap<>(5);
+	private ArrayList<Level> levels = new ArrayList<>(3);
     
     /**
      * sets the game up by loading levels from files, spawning the player, binding the keys, and setting up physics relations

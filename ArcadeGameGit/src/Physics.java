@@ -1,8 +1,4 @@
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 
 /**
  * class defines what a rectangular physics object should have and has associated methods for doing physics calculations
@@ -65,6 +61,8 @@ public abstract class Physics{
     public boolean getFalling(){
         return isFalling;
     }
+
+    public abstract boolean isSprite();
     
     /**
      * updates the position of the object based on isFalling and the acceleration and velocity override; mainly used with "jumping"

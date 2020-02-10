@@ -29,7 +29,7 @@ public abstract class Sprite extends Physics {
     @Override
     public boolean physicsCollision(Physics p, boolean[] pointOtherPhysics) {
         boolean continuePhysics = true;
-        if(p.getClass() == this.getClass()){//check to see if the other object is a sprite and interact with it
+        if(p.isSprite()){//check to see if the other object is a sprite and interact with it
             continuePhysics = this.interactsWith((Sprite) p);
         }
         if(!continuePhysics) return getFalling();
@@ -102,6 +102,11 @@ public abstract class Sprite extends Physics {
     
     public Movement getMover(){
         return mover;
+    }
+
+    @Override
+    public boolean isSprite() {
+        return true;
     }
 
     public abstract boolean interactsWith(Sprite otherSprite);
