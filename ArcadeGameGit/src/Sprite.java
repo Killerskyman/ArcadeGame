@@ -1,5 +1,8 @@
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 /**
  * defines what a movable object that interacts with others of itself should have
@@ -102,6 +105,15 @@ public abstract class Sprite extends Physics {
     
     public Movement getMover(){
         return mover;
+    }
+
+    public ActionListener getAction(int index){
+        ActionListener out = mover.getMovers().get(index);
+        if(out == null){
+            return e -> {};
+        }else{
+            return out;
+        }
     }
 
     @Override

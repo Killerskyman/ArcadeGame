@@ -43,9 +43,9 @@ public class Main {
 		GameComponent gamecomp = new GameComponent(physics);
 	    ComponentInputMap inputMap = new ComponentInputMap(gamecomp);
 	    ActionMap actMap = new ActionMap();
-	    makeBinding(KeyEvent.VK_LEFT, player.getMover().getMovers().get(0), inputMap, actMap);
-	    makeBinding(KeyEvent.VK_RIGHT, player.getMover().getMovers().get(1), inputMap, actMap);
-	    makeBinding(KeyEvent.VK_UP, player.getMover().getMovers().get(2), inputMap, actMap);
+	    makeBinding(KeyEvent.VK_LEFT, player.getAction(UserMovement.ActionListIndex.LEFT.getIndex()), inputMap, actMap);
+	    makeBinding(KeyEvent.VK_RIGHT, player.getAction(UserMovement.ActionListIndex.RIGHT.getIndex()), inputMap, actMap);
+	    makeBinding(KeyEvent.VK_UP, player.getAction(UserMovement.ActionListIndex.UP.getIndex()), inputMap, actMap);
         gamecomp.setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW, inputMap);
         gamecomp.setActionMap(actMap);
 
