@@ -39,6 +39,7 @@ public class Main {
 	    loadLevels(levels, new ArrayList<>(Arrays.asList("testLvl.txt", "New Text Document.txt")));
 	    levels.get(0).spawnHero(player);
 	    levels.get(0).addPlatsToPhysics(physics);
+
 		GameComponent gamecomp = new GameComponent(physics);
 	    ComponentInputMap inputMap = new ComponentInputMap(gamecomp);
 	    ActionMap actMap = new ActionMap();
@@ -47,6 +48,7 @@ public class Main {
 	    makeBinding(KeyEvent.VK_UP, player.getMover().getMovers().get(2), inputMap, actMap);
         gamecomp.setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW, inputMap);
         gamecomp.setActionMap(actMap);
+
 	    gamecomp.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -80,6 +82,7 @@ public class Main {
             }
         });
 	    gamecomp.setFocusable(true);
+
         JFrame frame = new JFrame();
         frame.setSize(1000, 600);
         frame.setTitle("Milestone 1 Test");
@@ -122,21 +125,7 @@ public class Main {
      * updates all objects in the physics arraylist by checking for collisions and updating their position
      */
 	public void updatePhysics(){
-	    for(Physics checking : physics){
-	        boolean shouldNotFall = false;
-	        for(Physics checker : physics){
-	            if(checking != checker){
-	                boolean[] col = checking.doesCollideWith(checker);
-	                shouldNotFall = shouldNotFall || !checking.physicsCollision(checker, col);
-	                boolean[] opcol = {col[2], col[3], col[0], col[1]};
-	                checker.physicsCollision(checking, opcol);
-                }
-            }
-	        checking.setFalling(!shouldNotFall);
-        }
-	    for(Physics physic : physics){
-	        physic.updatePos();
-        }
+	    Physics.updatePhysics(physics);
     }
     
     /**

@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * class defines what a rectangular physics object should have and has associated methods for doing physics calculations
@@ -147,4 +148,22 @@ public abstract class Physics{
     }
     
     public abstract void drawOn(Graphics2D g);
+
+    public static void updatePhysics(ArrayList<Physics> physics){
+        for(Physics checking : physics){
+            boolean shouldNotFall = false;
+            for(Physics checker : physics){
+                if(checking != checker){
+                    boolean[] col = checking.doesCollideWith(checker);
+                    shouldNotFall = shouldNotFall || !checking.physicsCollision(checker, col);
+                    boolean[] opcol = {col[2], col[3], col[0], col[1]};
+                    checker.physicsCollision(checking, opcol);
+                }
+            }
+            checking.setFalling(!shouldNotFall);
+        }
+        for(Physics physic : physics){
+            physic.updatePos();
+        }
+    }
 }
