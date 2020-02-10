@@ -1,3 +1,6 @@
+/**
+ * monster 2 class WIP
+ */
 public class Monster2 extends Sprite {
     public Monster2(double fallAccel, double x, double y) {
         super(fallAccel, x, y);

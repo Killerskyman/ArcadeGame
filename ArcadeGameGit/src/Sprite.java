@@ -1,29 +1,44 @@
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
+/**
+ * defines what a movable object that interacts with others of itself should have
+ */
 public abstract class Sprite extends Physics {
 
-    private static final double PERCENTMOVEPHYSICS = 0.5;
-    private Movement mover;
-    public boolean isDead = false;
-
+    private static final double PERCENTMOVEPHYSICS = 0.99; //how fast it moves from other objects colliding with it
+    private Movement mover; //how it should be moved
+    public boolean isDead = false; //whether it should be deleted
+    
+    /**
+     * creates a sprite with following characteristics
+     * @param fallAccel how fast it falls
+     * @param x starting x
+     * @param y starting y
+     */
     public Sprite(double fallAccel, double x, double y) {
         super(fallAccel, x, y);
     }
     
+    /**
+     * coordinates how it should move when it collides with object p, autodetects interaction with another sprite object
+     * @param p physics object it collided with
+     * @param pointOtherPhysics output of Physics.doesCollideWith(p)
+     * @return whether it should fall or not
+     */
     @Override
-    public void physicsCollision(Physics p, boolean[] pointOtherPhysics) {
+    public boolean physicsCollision(Physics p, boolean[] pointOtherPhysics) {
         boolean continuePhysics = true;
-        if(p.getClass() == this.getClass()){
+        if(p.getClass() == this.getClass()){//check to see if the other object is a sprite and interact with it
             continuePhysics = this.interactsWith((Sprite) p);
         }
-        if(!continuePhysics) return;
-        setFalling(true);
+        if(!continuePhysics) return getFalling();
+        boolean shouldFall = true;
         if(pointOtherPhysics[0] && pointOtherPhysics[1])setY(getY()+PERCENTMOVEPHYSICS*(p.getLowerY()-getY()));
         else if(pointOtherPhysics[1] && pointOtherPhysics[2])setX(getX()-PERCENTMOVEPHYSICS*(p.getX()-getRightX()));
         else if(pointOtherPhysics[2] && pointOtherPhysics[3]){
             setY(getY()-PERCENTMOVEPHYSICS*(getLowerY()-p.getY()));
-            setFalling(false);
+            shouldFall = false;
         }
         else if(pointOtherPhysics[3] && pointOtherPhysics[0])setX(getX()+PERCENTMOVEPHYSICS*(p.getRightX()-getX()));
         else {
@@ -53,7 +68,7 @@ public abstract class Sprite extends Physics {
                 }else{
                     setY(getY() - deltaY);
                 }
-                setFalling(false);
+                shouldFall = false;
             }
             if(pointOtherPhysics[3]) {
                 double deltaX = PERCENTMOVEPHYSICS * (p.getRightX() - this.getX());
@@ -63,9 +78,10 @@ public abstract class Sprite extends Physics {
                 }else{
                     setY(getY() - deltaY);
                 }
-                setFalling(false);
+                shouldFall = false;
             }
         }
+        return shouldFall;
     }
     
     @Override
@@ -74,7 +90,7 @@ public abstract class Sprite extends Physics {
     }
 
     public abstract void spawning();
-
+    
     public void updateMovement(){
         mover.updatePos();
     }

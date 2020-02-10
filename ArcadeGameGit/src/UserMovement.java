@@ -5,12 +5,15 @@ import java.util.Arrays;
 
 public class UserMovement extends Movement {
     
-    private static final double horzMovSpeed = 5;
-    private static final double jumpVel = 10;
+    /**
+     * defines how the user interacts with a sprite this object is attached to
+     */
+    private static final double horzMovSpeed = 7;//how fast it moves side to side
+    private static final double jumpVel = 20;//how high it jumps
     private UsrMoveLeftList moverLeft = new UsrMoveLeftList();
     private UsrMoveRightList moverRight = new UsrMoveRightList();
     private UsrJumpList moverJump = new UsrJumpList();
-    private ArrayList<ActionListener> movers = new ArrayList<>(Arrays.asList(moverLeft, moverRight, moverJump));
+    private ArrayList<ActionListener> movers = new ArrayList<>(Arrays.asList(moverLeft, moverRight, moverJump));//combine in an arraylist to get it easier
 
     public UsrMoveLeftList getMoverLeft() {
         return moverLeft;
@@ -51,7 +54,10 @@ public class UserMovement extends Movement {
     public ArrayList<ActionListener> getMovers() {
         return movers;
     }
-
+    
+    /**
+     * action listener can be used to move the object to left
+     */
     public class UsrMoveLeftList implements ActionListener{
     
         @Override
@@ -60,6 +66,9 @@ public class UserMovement extends Movement {
         }
     }
     
+    /**
+     * action listener can be used to move the object to the right
+     */
     public class UsrMoveRightList implements ActionListener{
     
         @Override
@@ -68,6 +77,9 @@ public class UserMovement extends Movement {
         }
     }
     
+    /**
+     * action listener can be used to jump the object
+     */
     public class UsrJumpList implements ActionListener{
     
         @Override

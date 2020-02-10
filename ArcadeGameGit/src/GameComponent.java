@@ -2,6 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+/**
+ * draws all the current physics objects and contains all the listeners and keyBindings for controlling the game
+ */
 public class GameComponent extends JPanel {
     
     private ArrayList<Physics> physics;
