@@ -6,28 +6,41 @@ import java.util.ArrayList;
  * class that controls AI movement WIP
  */
 public class AIMovement extends Movement{
-    public AIMovement(Sprite sprite) {
+    
+    private static final double horzMove = 5;
+    private static final double jumpVel = 10;
+    private Hero player;
+    
+    public AIMovement(Sprite sprite, Hero player) {
         super(sprite);
+        this.player = player;
     }
     
     @Override
     public void updatePos() {
-    
+        if(player.getY() > sprite.getY()){
+            jump();
+        }
+        if(player.getX() > sprite.getX()){
+            moveRight();
+        }else{
+            moveLeft();
+        }
     }
     
     @Override
     public void moveLeft() {
-    
+        sprite.setX(sprite.getX() - horzMove);
     }
     
     @Override
     public void moveRight() {
-    
+        sprite.setX(sprite.getX() + horzMove);
     }
     
     @Override
     public void jump() {
-    
+        sprite.setJumpVely(-jumpVel);
     }
 
     @Override
