@@ -22,7 +22,12 @@ public class LevelPlatform extends Physics {
         setFalling(false); //should never move up or down
         return false;
     }
-    
+
+    @Override
+    public boolean isSprite() {
+        return false;
+    }
+
     @Override
     public void drawOn(Graphics2D g) {
         g.fill(new Rectangle2D.Double(getX(), getY(),getWidth(), getHeight()));

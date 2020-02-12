@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -9,6 +11,7 @@ public abstract class Sprite extends Physics {
     private static final double PERCENTMOVEPHYSICS = 0.99; //how fast it moves from other objects colliding with it
     private Movement mover; //how it should be moved
     public boolean isDead = false; //whether it should be deleted
+    public boolean spawnsSprite = false;
     
     /**
      * creates a sprite with following characteristics
@@ -20,6 +23,10 @@ public abstract class Sprite extends Physics {
         super(fallAccel, x, y);
     }
     
+    public Sprite(double fallAccel, double x, double y, double w, double h){
+        super(fallAccel, x, y, w, h);
+    }
+    
     /**
      * coordinates how it should move when it collides with object p, autodetects interaction with another sprite object
      * @param p physics object it collided with
@@ -29,7 +36,7 @@ public abstract class Sprite extends Physics {
     @Override
     public boolean physicsCollision(Physics p, boolean[] pointOtherPhysics) {
         boolean continuePhysics = true;
-        if(p.getClass() == this.getClass()){//check to see if the other object is a sprite and interact with it
+        if(p.isSprite()){//check to see if the other object is a sprite and interact with it
             continuePhysics = this.interactsWith((Sprite) p);
         }
         if(!continuePhysics) return getFalling();
@@ -89,10 +96,12 @@ public abstract class Sprite extends Physics {
         g.fill(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight()));
     }
 
-    public abstract void spawning();
+    public abstract Sprite spawning();
     
     public void updateMovement(){
-        mover.updatePos();
+        if(mover != null) {
+            mover.updatePos();
+        }
     }
     
     public void addMover(Movement mover){
@@ -102,6 +111,24 @@ public abstract class Sprite extends Physics {
     
     public Movement getMover(){
         return mover;
+    }
+
+    public ActionListener getAction(int index){
+        ActionListener out = mover.getMovers().get(index);
+        if(out == null){
+            return e -> {};
+        }else{
+            return out;
+        }
+    }
+
+    @Override
+    public boolean isSprite() {
+        return true;
+    }
+    
+    public int spawnTiming(){
+        return 0;
     }
 
     public abstract boolean interactsWith(Sprite otherSprite);

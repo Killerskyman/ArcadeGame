@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -13,6 +14,7 @@ public class Level extends JComponent {
     private String filename;
     private BufferedImage background;
     private ArrayList<LevelPlatform> platforms = new ArrayList<>();
+    private ArrayList<Point2D> monsterSpawns = new ArrayList<>();
     private String heroSpawn;
     private Integer heroSpawnX;
     private Integer heroSpawnY;
@@ -38,6 +40,9 @@ public class Level extends JComponent {
         	//platform position x; platform position y; platform width; platform height;
         	LevelPlatform current = new LevelPlatform(Double.parseDouble(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]));
         	platforms.add(current);
+        	if(Boolean.parseBoolean(args[4])){
+        	    monsterSpawns.add(new Point2D.Double(current.getX()+Double.parseDouble(args[5]), current.getY()));
+            }
         }
     }
     
@@ -46,6 +51,7 @@ public class Level extends JComponent {
      * @param input the array to add the platforms to
      */
     public void addPlatsToPhysics(ArrayList<Physics> input){
+        if(input.contains(platforms.get(0))) return;
         input.addAll(platforms);
     }
     
@@ -57,6 +63,10 @@ public class Level extends JComponent {
         for(Physics plat : platforms){
             physics.remove(plat);
         }
+    }
+    
+    public ArrayList<Point2D> getMonsterSpawns(){
+        return monsterSpawns;
     }
     
     /**

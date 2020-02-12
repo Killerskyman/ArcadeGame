@@ -15,16 +15,19 @@ public class UserMovement extends Movement {
     private UsrJumpList moverJump = new UsrJumpList();
     private ArrayList<ActionListener> movers = new ArrayList<>(Arrays.asList(moverLeft, moverRight, moverJump));//combine in an arraylist to get it easier
 
-    public UsrMoveLeftList getMoverLeft() {
-        return moverLeft;
-    }
+    public enum ActionListIndex{
+        LEFT(0),
+        RIGHT(1),
+        UP(2);
 
-    public UsrMoveRightList getMoverRight() {
-        return moverRight;
-    }
+        private int index;
+        ActionListIndex(int index) {
+            this.index = index;
+        }
 
-    public UsrJumpList getMoverJump() {
-        return moverJump;
+        public int getIndex(){
+            return index;
+        }
     }
 
     public UserMovement(Sprite sprite) {

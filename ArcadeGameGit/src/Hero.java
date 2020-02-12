@@ -15,12 +15,17 @@ public class Hero extends Sprite{
     }
     
     @Override
-    public void spawning() {
-    
+    public Sprite spawning() {
+        return null;
     }
     
     @Override
     public boolean interactsWith(Sprite otherSprite) {
+    	/**
+    	 * determines the object can interact with the given sprite
+    	 * @param sprite 
+    	 * @return false if the given sprite is higher and true if the hero is higher
+    	 */
         if(otherSprite.getJoustHeight() > this.getJoustHeight()){
             otherSprite.death();
             return false;
@@ -30,11 +35,18 @@ public class Hero extends Sprite{
     
     @Override
     public double getJoustHeight() {
+    	/**
+    	 * gets height used to determine interaction with monsters
+    	 * @return hero's y value
+    	 */
         return this.getY();
     }
     
     @Override
     public void death() {
+    	/**
+    	 * sets hero's death value to true
+    	 */
         isDead = true;
     }
 }
