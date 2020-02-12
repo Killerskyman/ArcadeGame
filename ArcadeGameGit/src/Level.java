@@ -51,6 +51,7 @@ public class Level extends JComponent {
      * @param input the array to add the platforms to
      */
     public void addPlatsToPhysics(ArrayList<Physics> input){
+        if(input.contains(platforms.get(0))) return;
         input.addAll(platforms);
     }
     

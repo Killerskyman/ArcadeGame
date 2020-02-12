@@ -118,20 +118,35 @@ public class Main {
     public void switchLevel(Level remove, Level add, Hero player){
         if(remove != null) {
             remove.removePlatsFromPhysics(physics);
-            physics.removeAll(monsters);
+            for(Sprite monster : monsters){
+                destroySprite(monster);
+            }
             monsters.clear();
         }
 	    add.addPlatsToPhysics(physics);
         for(Point2D spawn : add.getMonsterSpawns()){
-//            if(Math.random()>0.5){
-//                monsters.add(new Monster1(0.5, spawn.getX(), spawn.getY()-50, player));
-//            }else{
-//                monsters.add(new Monster2(0.5, spawn.getX(), spawn.getY()-50, player));
-//            }
-            monsters.add(new Monster1(0.5, spawn.getX(), spawn.getY()-50, player));
+            if(Math.random()>0.5){
+                spawnSprite(new Monster1(0.5, spawn.getX(), spawn.getY()-50, player));
+            }else{
+                spawnSprite(new Monster2(0.5, spawn.getX(), spawn.getY()-50, player));
+            }
         }
-        physics.addAll(monsters);
 	    add.spawnHero(player);
+    }
+    
+    public void destroySprite(Sprite spriteToDest){
+        physics.remove(spriteToDest);
+        if(spriteToDest.spawnsSprite){
+            removeTimedSpawn(spriteToDest);
+        }
+    }
+    
+    public void spawnSprite(Sprite spriteToSpawn){
+        physics.add(spriteToSpawn);
+        monsters.add(spriteToSpawn);
+        if(spriteToSpawn.spawnsSprite){
+            makeTimedSpawn(spriteToSpawn, spriteToSpawn.spawnTiming());
+        }
     }
     
     /**
@@ -159,8 +174,27 @@ public class Main {
         keyStates.put(keyCode, false);
     }
     
-    private void makeTimedEvent(int cyclesToWait){
+    private HashMap<Sprite, Integer> timedSpawns = new HashMap<>();
+    private HashMap<Sprite, Integer> currentTimeSpawns = new HashMap<>();
+    private void makeTimedSpawn(Sprite sprite, int cyclesToWait){
+        timedSpawns.put(sprite, cyclesToWait);
+        currentTimeSpawns.put(sprite, 0);
+    }
     
+    private void removeTimedSpawn(Sprite spriteToRem){
+        timedSpawns.remove(spriteToRem);
+        currentTimeSpawns.remove(spriteToRem);
+    }
+    
+    private void updateTimedSpawns(){
+        for(Sprite sprite : timedSpawns.keySet()){
+            if(timedSpawns.get(sprite) > currentTimeSpawns.get(sprite)){
+                currentTimeSpawns.put(sprite, currentTimeSpawns.get(sprite) + 1);
+            }else{
+                spawnSprite(sprite.spawning());
+                currentTimeSpawns.put(sprite, 0);
+            }
+        }
     }
     
     /**
@@ -189,8 +223,9 @@ public class Main {
     
         @Override
         public void actionPerformed(ActionEvent e) {
-	        updatePhysics();
 	        Movement.updateMovement(monsters);
+	        updateTimedSpawns();
+	        updatePhysics();
 	        component.repaint();
         }
     }

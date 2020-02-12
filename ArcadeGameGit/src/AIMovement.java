@@ -9,7 +9,7 @@ public class AIMovement extends Movement{
     
     private static final double horzMove = 5;
     private static final double jumpVel = 10;
-    private Hero player;
+    public Hero player;
     
     public AIMovement(Sprite sprite, Hero player) {
         super(sprite);
@@ -18,7 +18,7 @@ public class AIMovement extends Movement{
     
     @Override
     public void updatePos() {
-        if(player.getY() < sprite.getY()){
+        if(player.getY()+5 < sprite.getY()){
             this.jump();
         }
         if(player.getX() > sprite.getX()){

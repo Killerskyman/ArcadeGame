@@ -13,14 +13,14 @@ public class Bullet extends Sprite{
     private Point2D.Double vector;
     private double vel;
     public Bullet(double x, double y, double vel, Point2D.Double vector) {
-        super(0, x, y);
+        super(0, x, y, 10, 10);
         this.vector = vector;
         this.vel = vel;
         double dx = vector.getX()-x;
         double dy = vector.getY()-y;
-        double vm = (vel * vel) / ((dx * dx) + (dy * dy));
-        this.xv = vector.getX()* vm;
-        this.yv = vector.getY()* vm;
+        double vm = Math.sqrt((dx * dx) + (dy * dy));
+        this.xv = (dx*vel)/vm;
+        this.yv = (dy*vel)/vm;
         addMover(new Movement(this) {
             @Override
             public void updatePos() {
@@ -55,13 +55,13 @@ public class Bullet extends Sprite{
     }
     
     @Override
-    public void spawning() {
-    
+    public Sprite spawning() {
+        return null;
     }
     
     @Override
     public boolean interactsWith(Sprite otherSprite) {
-        return true;
+        return false;
     }
     
     @Override
