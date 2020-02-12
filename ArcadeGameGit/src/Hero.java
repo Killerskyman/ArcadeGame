@@ -15,8 +15,8 @@ public class Hero extends Sprite{
     }
     
     @Override
-    public void spawning() {
-    
+    public Sprite spawning() {
+        return null;
     }
     
     @Override
