@@ -95,7 +95,9 @@ public abstract class Sprite extends Physics {
     public abstract void spawning();
     
     public void updateMovement(){
-        mover.updatePos();
+        if(mover != null) {
+            mover.updatePos();
+        }
     }
     
     public void addMover(Movement mover){

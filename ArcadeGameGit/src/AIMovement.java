@@ -18,8 +18,8 @@ public class AIMovement extends Movement{
     
     @Override
     public void updatePos() {
-        if(player.getY() > sprite.getY()){
-            jump();
+        if(player.getY() < sprite.getY()){
+            this.jump();
         }
         if(player.getX() > sprite.getX()){
             moveRight();
