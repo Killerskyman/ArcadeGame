@@ -159,6 +159,10 @@ public class Main {
         keyStates.put(keyCode, false);
     }
     
+    private void makeTimedEvent(int cyclesToWait){
+    
+    }
+    
     /**
      * ActionListener to update all the keybinds made from makeBinding
      */

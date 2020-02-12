@@ -126,4 +126,12 @@ public abstract class Sprite extends Physics {
     public abstract boolean interactsWith(Sprite otherSprite);
     public abstract double getJoustHeight();
     public abstract void death();
+    
+    public class spawnAction implements ActionListener{
+    
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            spawning();
+        }
+    }
 }
