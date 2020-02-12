@@ -2,8 +2,14 @@
  * monster 2 class WIP
  */
 public class Monster2 extends Sprite {
+    
     public Monster2(double fallAccel, double x, double y) {
         super(fallAccel, x, y);
+    }
+    
+    public Monster2(double fallAccel, double x, double y, Hero player){
+        this(fallAccel, x, y);
+        this.addMover(new AIMovement(this, player));
     }
     
     @Override
@@ -13,7 +19,7 @@ public class Monster2 extends Sprite {
     
     @Override
     public boolean interactsWith(Sprite otherSprite) {
-        return false;
+        return true;
     }
     
     @Override

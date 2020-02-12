@@ -22,4 +22,10 @@ public abstract class Movement{
         this.sprite = sprite;
     }
     
+    public static void updateMovement(ArrayList<Sprite> sprites){
+        for(Sprite sprite : sprites){
+            sprite.updateMovement();
+        }
+    }
+    
 }

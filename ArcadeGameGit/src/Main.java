@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,7 +26,7 @@ public class Main {
 
 	//TODO: adjust init values of arraylists as program expands
 	private ArrayList<Physics> physics = new ArrayList<>(15);
-	private ArrayList<Sprite> sprites = new ArrayList<>();
+	private ArrayList<Sprite> monsters = new ArrayList<>();
 	private HashMap<Integer, ActionListener> keyActions = new HashMap<>(5);
 	private HashMap<Integer, Boolean> keyStates = new HashMap<>(5);
 	private ArrayList<Level> levels = new ArrayList<>(3);
@@ -37,8 +38,7 @@ public class Main {
 	    Hero player = new Hero(0.5, 50, 50);
         physics.add(player);
 	    loadLevels(levels, new ArrayList<>(Arrays.asList("testLvl.txt", "New Text Document.txt")));
-	    levels.get(0).spawnHero(player);
-	    levels.get(0).addPlatsToPhysics(physics);
+	    switchLevel(null, levels.get(0), player);
 
 		GameComponent gamecomp = new GameComponent(physics);
 	    ComponentInputMap inputMap = new ComponentInputMap(gamecomp);
@@ -84,7 +84,7 @@ public class Main {
 	    gamecomp.setFocusable(true);
 
         JFrame frame = new JFrame();
-        frame.setSize(1000, 600);
+        frame.setSize(1200, 1200);
         frame.setTitle("Milestone 1 Test");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(gamecomp, BorderLayout.CENTER);
@@ -116,8 +116,21 @@ public class Main {
      * @param player the player, used for spawning at correct location
      */
     public void switchLevel(Level remove, Level add, Hero player){
-	    remove.removePlatsFromPhysics(physics);
+        if(remove != null) {
+            remove.removePlatsFromPhysics(physics);
+            physics.removeAll(monsters);
+            monsters.clear();
+        }
 	    add.addPlatsToPhysics(physics);
+        for(Point2D spawn : add.getMonsterSpawns()){
+//            if(Math.random()>0.5){
+//                monsters.add(new Monster1(0.5, spawn.getX(), spawn.getY()-50, player));
+//            }else{
+//                monsters.add(new Monster2(0.5, spawn.getX(), spawn.getY()-50, player));
+//            }
+            monsters.add(new Monster1(0.5, spawn.getX(), spawn.getY()-50, player));
+        }
+        physics.addAll(monsters);
 	    add.spawnHero(player);
     }
     
@@ -173,6 +186,7 @@ public class Main {
         @Override
         public void actionPerformed(ActionEvent e) {
 	        updatePhysics();
+	        Movement.updateMovement(monsters);
 	        component.repaint();
         }
     }
