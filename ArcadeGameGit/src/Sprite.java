@@ -42,7 +42,7 @@ public abstract class Sprite extends Physics {
         if(!continuePhysics) return getFalling();
         boolean shouldFall = true;
         if(pointOtherPhysics[0] && pointOtherPhysics[1])setY(getY()+PERCENTMOVEPHYSICS*(p.getLowerY()-getY()));
-        else if(pointOtherPhysics[1] && pointOtherPhysics[2])setX(getX()-PERCENTMOVEPHYSICS*(p.getX()-getRightX()));
+        else if(pointOtherPhysics[1] && pointOtherPhysics[2])setX(getX()-PERCENTMOVEPHYSICS*(getRightX()-p.getX()));
         else if(pointOtherPhysics[2] && pointOtherPhysics[3]){
             setY(getY()-PERCENTMOVEPHYSICS*(getLowerY()-p.getY()));
             shouldFall = false;

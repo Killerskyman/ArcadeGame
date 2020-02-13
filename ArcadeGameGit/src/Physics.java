@@ -156,8 +156,6 @@ public abstract class Physics{
                 if(checking != checker){
                     boolean[] col = checking.doesCollideWith(checker);
                     shouldNotFall = shouldNotFall || !checking.physicsCollision(checker, col);
-                    boolean[] opcol = {col[2], col[3], col[0], col[1]};
-                    checker.physicsCollision(checking, opcol);
                 }
             }
             checking.setFalling(!shouldNotFall);
