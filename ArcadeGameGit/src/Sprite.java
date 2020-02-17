@@ -127,6 +127,15 @@ public abstract class Sprite extends Physics {
     }
 
     @Override
+    public boolean interactsWith(Physics p) {
+        if(p.isSprite()){
+            return this.interactsWith((Sprite) p);
+        }else {
+            return super.interactsWith(p);
+        }
+    }
+
+    @Override
     public boolean isSprite() {
         return true;
     }
@@ -135,6 +144,9 @@ public abstract class Sprite extends Physics {
         return 0;
     }
 
+    public abstract boolean interactsWith(Sprite sprite);
     public abstract double getJoustHeight();
-    public abstract void death();
+    public void death(){
+        isDead = true;
+    }
 }

@@ -10,7 +10,7 @@ public class Hero extends Sprite{
      * @param y starting y position
      */
     public Hero(double fallAccel, double x, double y) {
-        super(fallAccel, x, y);
+        super(fallAccel, x, y, false);
         addMover(new UserMovement(this));
     }
     
