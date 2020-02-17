@@ -23,7 +23,7 @@ public class Monster1 extends Sprite {
     
     @Override
     public double getJoustHeight() {
-        return 0;
+        return this.getY();
     }
     
     @Override

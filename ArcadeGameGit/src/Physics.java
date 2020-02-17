@@ -54,6 +54,9 @@ public abstract class Physics{
     }
 
     public abstract boolean physicsCollision(Physics p, boolean[] pointOtherPhysics);
+    public boolean interactsWith(Physics p){
+        return true;
+    }
 
     public void setFalling(boolean isFalling){
         this.isFalling = isFalling;
