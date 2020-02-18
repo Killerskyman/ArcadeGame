@@ -37,6 +37,10 @@ public class Main {
 	public Main(){
 	    Hero player = new Hero(0.5, 50, 50);
         physics.add(player);
+        physics.add(new LevelPlatform(-20,0,20,1100));
+        physics.add(new LevelPlatform(1920, 0, 20, 1100));
+        physics.add(new LevelPlatform(-20,-20, 1960, 20));
+        physics.add(new LevelPlatform(-20, 1080-10, 1960, 40));
         loadLevels(levels, new ArrayList<>(Arrays.asList("testLvl.txt", "New Text Document.txt")));
 	    switchLevel(null, levels.get(0), player);
 
@@ -84,7 +88,7 @@ public class Main {
 	    gamecomp.setFocusable(true);
 
         JFrame frame = new JFrame();
-        frame.setSize(1200, 1200);
+        frame.setSize(1920/2, 1080/2);
         frame.setTitle("Milestone 1 Test");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(gamecomp, BorderLayout.CENTER);

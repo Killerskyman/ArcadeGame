@@ -35,6 +35,7 @@ public class GameComponent extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        g2.scale(getWidth()/1920.0, getHeight()/1080.0);
         for(Physics physic : physics){
             physic.drawOn(g2);
         }

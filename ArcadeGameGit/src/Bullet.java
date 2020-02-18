@@ -37,6 +37,9 @@ public class Bullet extends Sprite{
             public void updatePos() {
                 sprite.setX(sprite.getX()+xv);
                 sprite.setY(sprite.getY()+yv);
+                if(getX() < 0 || getY() < 0 || getRightX() > 1920 || getLowerY() > 1080-10){
+                    sprite.isDead = true;
+                }
             }
     
             @Override
