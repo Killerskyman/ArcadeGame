@@ -8,6 +8,7 @@ public class Monster1 extends Sprite {
     
     public Monster1(double fallAccel, double x, double y, Hero player){
         this(fallAccel, x, y);
+        isMonster = true;
         this.addMover(new AIMovement(this, player));
     }
     
@@ -18,7 +19,7 @@ public class Monster1 extends Sprite {
 
     @Override
     public boolean interactsWith(Sprite p) {
-        if(p.isMonster) return true;
+        if(p.isFriendly) return true;
         if(p.getJoustHeight() > getJoustHeight()){
             isDead = true;
             return false;
@@ -29,5 +30,11 @@ public class Monster1 extends Sprite {
     @Override
     public double getJoustHeight() {
         return this.getY();
+    }
+    
+    @Override
+    public Sprite death() {
+        super.death();
+        return new Egg(0, this.getX(), this.getY());
     }
 }

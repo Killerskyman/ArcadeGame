@@ -89,7 +89,7 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(gamecomp, BorderLayout.CENTER);
         Timer timer = new Timer(20, new GameTickList(gamecomp));
-        timer.addActionListener(new updateMove());
+        timer.addActionListener(new updateBinds());
         timer.start();
         frame.setVisible(true);
 	}
@@ -200,7 +200,7 @@ public class Main {
     /**
      * ActionListener to update all the keybinds made from makeBinding
      */
-    private class updateMove implements ActionListener{
+    private class updateBinds implements ActionListener{
     
         @Override
         public void actionPerformed(ActionEvent e) {

@@ -93,10 +93,10 @@ public class Bullet extends Sprite{
     
     /**
      * removes the bullet object
+     * @return
      */
     @Override
-    public void death() {
-    
-    
+    public Sprite death() {
+        return null;
     }
 }

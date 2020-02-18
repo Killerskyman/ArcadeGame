@@ -5,7 +5,7 @@
 public class Egg extends Sprite{
     
     public Egg(double fallAccel, double x, double y) {
-        super(fallAccel, x, y);
+        super(fallAccel, x, y, true);
     }
     
     @Override
@@ -21,10 +21,5 @@ public class Egg extends Sprite{
     @Override
     public double getJoustHeight() {
         return 0;
-    }
-    
-    @Override
-    public void death() {
-    
     }
 }
