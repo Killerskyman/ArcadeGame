@@ -8,6 +8,13 @@ public class Egg extends Sprite{
     
     private Sprite spriteToSpawn;
     
+    /**
+     * makes a new egg object that spawns the specified sprite
+     * @param spriteToSpawn sprite to spawn
+     * @param fallAccel how fast it falls
+     * @param x position x
+     * @param y position y
+     */
     public Egg(Sprite spriteToSpawn, double fallAccel, double x, double y) {
         super(fallAccel, x, y, true);
         color = Color.YELLOW;
@@ -19,7 +26,7 @@ public class Egg extends Sprite{
     public Sprite spawning() {
         spriteToSpawn.setX(getX());
         spriteToSpawn.setY(getY());
-        isDead = true;
+        isDead = true;//kms
         spriteToSpawn.isDead = false;
         return spriteToSpawn;
     }

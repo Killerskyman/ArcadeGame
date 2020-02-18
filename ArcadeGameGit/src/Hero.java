@@ -22,11 +22,6 @@ public class Hero extends Sprite{
         return null;
     }
     
-    /**
-     * determines the object can interact with the given sprite
-     * @param otherSprite
-     * @return false if the given sprite is higher and true if the hero is higher
-     */
     @Override
     public boolean interactsWith(Sprite otherSprite) {
     	
@@ -37,10 +32,6 @@ public class Hero extends Sprite{
         return true;
     }
     
-    /**
-     * gets height used to determine interaction with monsters
-     * @return hero's y value
-     */
     @Override
     public double getJoustHeight() {
         return this.getY();

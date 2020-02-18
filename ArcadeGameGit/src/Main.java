@@ -133,11 +133,21 @@ public class Main {
 	    add.spawnHero(player);
     }
     
+    /**
+     * kills the sprite
+     *
+     * removes the sprite from the necessary arraylists and spawns the new sprite upon death if needed
+     * @param spriteToKill
+     */
     public void killSprite(Sprite spriteToKill){
         destroySprite(spriteToKill);
         spawnSprite(spriteToKill.death());
     }
     
+    /**
+     * only removes the sprite from the necessary arraylists,
+     * @param spriteToDest
+     */
     public void destroySprite(Sprite spriteToDest){
         physics.remove(spriteToDest);
         monsters.remove(spriteToDest);
@@ -146,6 +156,10 @@ public class Main {
         }
     }
     
+    /**
+     * adds the sprite to the necessary arraylists and spawnings, may be null
+     * @param spriteToSpawn
+     */
     public void spawnSprite(Sprite spriteToSpawn){
         if(spriteToSpawn == null) return;
         physics.add(spriteToSpawn);
@@ -182,16 +196,29 @@ public class Main {
     
     private HashMap<Sprite, Integer> timedSpawns = new HashMap<>();
     private HashMap<Sprite, Integer> currentTimeSpawns = new HashMap<>();
+    
+    /**
+     * creates a new timed spawn to check by adding the proper vales to the hashmaps
+     * @param sprite
+     * @param cyclesToWait
+     */
     private void makeTimedSpawn(Sprite sprite, int cyclesToWait){
         timedSpawns.put(sprite, cyclesToWait);
         currentTimeSpawns.put(sprite, 0);
     }
     
+    /**
+     * removes a timed spawn if it exists from the proper hashmaps
+     * @param spriteToRem
+     */
     private void removeTimedSpawn(Sprite spriteToRem){
         timedSpawns.remove(spriteToRem);
         currentTimeSpawns.remove(spriteToRem);
     }
     
+    /**
+     * updates any timed spawns that are in the hashmaps
+     */
     private void updateTimedSpawns(){
         for(Sprite sprite : timedSpawns.keySet()){
             if(timedSpawns.get(sprite) > currentTimeSpawns.get(sprite)){
@@ -203,6 +230,9 @@ public class Main {
         }
     }
     
+    /**
+     * removes any monsters that are marked with isDead and marks if the hero has died
+     */
     private void updateDead(){
         ArrayList<Sprite> spritesToRem = new ArrayList<>();
         for(Sprite sprite : monsters){

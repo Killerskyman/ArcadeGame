@@ -61,42 +61,34 @@ public class Bullet extends Sprite{
         });
     }
     
+    /**
+     * constructs a bullet class with the default velocity (15)
+     * @param x position of sprite
+     * @param y position of sprite
+     * @param vector for bullet to travel
+     */
     public Bullet(double x, double y, Point2D.Double vector){
         this(x,y,15,vector);
     }
     
-    /**
-     * spawns the bullet sprite
-     */
     @Override
     public Sprite spawning() {
     	
         return null;
     }
     
-    /**
-     * makes the bullet unable to interact with the given sprite
-     * @param otherSprite sprite
-     */
     @Override
     public boolean interactsWith(Sprite otherSprite) {
         otherSprite.interactsWith(this);
         return false;
     }
     
-    /**
-     * returns height to determine if hero dies
-     */
     @Override
     public double getJoustHeight() {
     	
         return 0;
     }
     
-    /**
-     * removes the bullet object
-     * @return
-     */
     @Override
     public Sprite death() {
         return null;

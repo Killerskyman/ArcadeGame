@@ -1,14 +1,30 @@
 import java.awt.*;
 
 /**
- * monster 1 class WIP
+ * monster 1 is a melee fighter
  */
 public class Monster1 extends Sprite {
+    
+    /**
+     * makes a new monster with fall acceleration and starting position x,y
+     * @param fallAccel
+     * @param x
+     * @param y
+     */
     public Monster1(double fallAccel, double x, double y) {
         super(fallAccel, x, y, true);
         color = Color.ORANGE;
     }
     
+    /**
+     * makes a new monster with fall acceleration and starting position x,y.
+     *
+     * also automagically creates a simple but agressive AI movement with the player to track as player
+     * @param fallAccel
+     * @param x
+     * @param y
+     * @param player the Hero object player to track for the AI
+     */
     public Monster1(double fallAccel, double x, double y, Hero player){
         this(fallAccel, x, y);
         isMonster = true;

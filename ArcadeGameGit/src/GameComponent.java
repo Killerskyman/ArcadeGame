@@ -9,21 +9,23 @@ public class GameComponent extends JPanel {
     
     private ArrayList<Physics> physics;
     
+    /**
+     * adds objects with physics to the game component
+     * @param physics array list of physics objects
+     */
     public GameComponent(ArrayList<Physics> physics){
-    	/**
-    	 * adds objects with physics to the game component
-    	 * @param array list of physics objects
-    	 */
+    	
         this.physics = physics;
     }
     
+    /**
+     * adds inputs to the game component
+     * @param physics array list of physics objects
+     * @param keyInput map
+     * @param actMap of actions for those keys
+     */
     public GameComponent(ArrayList<Physics> physics, ComponentInputMap keyInput, ActionMap actMap){
-    	/**
-    	 * adds inputs to the game component
-    	 * @param array list of physics objects
-    	 * @param input map 
-    	 * @param maps of actions for those keys
-    	 */
+    	
         this(physics);
         setInputMap(WHEN_IN_FOCUSED_WINDOW, keyInput);
         setActionMap(actMap);

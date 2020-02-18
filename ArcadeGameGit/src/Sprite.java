@@ -26,6 +26,15 @@ public abstract class Sprite extends Physics {
         this.isFriendly = isFriendly;
     }
     
+    /**
+     * creates a sprite with following characteristics
+     * @param fallAccel how fast it falls
+     * @param x starting x
+     * @param y starting y
+     * @param w width of the object
+     * @param h height of the object
+     * @param isFriendly whether it is friendly to monsters
+     */
     public Sprite(double fallAccel, double x, double y, double w, double h, boolean isFriendly){
         super(fallAccel, x, y, w, h);
         this.isFriendly = isFriendly;
@@ -101,7 +110,11 @@ public abstract class Sprite extends Physics {
         g.setColor(color);
         g.fill(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight()));
     }
-
+    
+    /**
+     * what to do when spawning a new sprite
+     * @return the sprite to spawn
+     */
     public abstract Sprite spawning();
     
     public void updateMovement(){
@@ -118,7 +131,12 @@ public abstract class Sprite extends Physics {
     public Movement getMover(){
         return mover;
     }
-
+    
+    /**
+     * retrieves the actionListener for the mover attached to the sprite
+     * @param index index to grab from in case of multiple
+     * @return will be null if actionlistener is not found
+     */
     public ActionListener getAction(int index){
         ActionListener out = mover.getMovers().get(index);
         if(out == null){
@@ -142,12 +160,26 @@ public abstract class Sprite extends Physics {
         return true;
     }
     
+    /**
+     * how long between spawn intervals
+     * @return number of game cycles to wait
+     */
     public int spawnTiming(){
         return 0;
     }
-
+    
+    /**
+     * sprite specific interaction, allows for specific yet necessary calls to certain parameters
+     * @param sprite sprite that this sprite interacts with
+     * @return whether to continue physics on the object
+     */
     public abstract boolean interactsWith(Sprite sprite);
     public abstract double getJoustHeight();
+    
+    /**
+     * what to do at death, only modify this objects parameters, removing the object from specific arraylists is taken care of elsewhere
+     * @return the object to spawn upon death, may be null
+     */
     public Sprite death(){
         isDead = true;
         return null;
