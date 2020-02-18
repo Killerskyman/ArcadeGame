@@ -37,7 +37,7 @@ public class Main {
 	public Main(){
 	    Hero player = new Hero(0.5, 50, 50);
         physics.add(player);
-	    loadLevels(levels, new ArrayList<>(Arrays.asList("testLvl.txt", "New Text Document.txt")));
+        loadLevels(levels, new ArrayList<>(Arrays.asList("testLvl.txt", "New Text Document.txt")));
 	    switchLevel(null, levels.get(0), player);
 
 		GameComponent gamecomp = new GameComponent(physics);

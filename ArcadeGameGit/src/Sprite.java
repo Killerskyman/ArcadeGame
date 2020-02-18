@@ -51,7 +51,7 @@ public abstract class Sprite extends Physics {
         boolean continuePhysics = true;
         boolean[] noContact = {false, false, false, false};
         if(p.isSprite() && !(Arrays.equals(pointOtherPhysics, noContact))){//check to see if the other object is a sprite and interact with it
-            continuePhysics = this.interactsWith((Sprite) p);
+            continuePhysics = this.interactsWith((Sprite) p) || ((Sprite) p).interactsWith(this);
         }
         if(!continuePhysics) return true;
         boolean shouldFall = true;

@@ -79,13 +79,11 @@ public class Bullet extends Sprite{
     
     @Override
     public boolean interactsWith(Sprite otherSprite) {
-        otherSprite.interactsWith(this);
         return false;
     }
     
     @Override
     public double getJoustHeight() {
-    	
         return 0;
     }
     
