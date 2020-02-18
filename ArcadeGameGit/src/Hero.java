@@ -1,3 +1,5 @@
+import java.awt.*;
+
 /**
  * hero class that is made to be the player
  */
@@ -11,6 +13,7 @@ public class Hero extends Sprite{
      */
     public Hero(double fallAccel, double x, double y) {
         super(fallAccel, x, y, false);
+        color = Color.GREEN;
         addMover(new UserMovement(this));
     }
     

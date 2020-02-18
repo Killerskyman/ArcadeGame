@@ -118,10 +118,9 @@ public class Main {
     public void switchLevel(Level remove, Level add, Hero player){
         if(remove != null) {
             remove.removePlatsFromPhysics(physics);
-            for(Sprite monster : monsters){
+            for(Sprite monster : new ArrayList<>(monsters)){
                 destroySprite(monster);
             }
-            monsters.clear();
         }
 	    add.addPlatsToPhysics(physics);
         for(Point2D spawn : add.getMonsterSpawns()){
@@ -134,14 +133,21 @@ public class Main {
 	    add.spawnHero(player);
     }
     
+    public void killSprite(Sprite spriteToKill){
+        destroySprite(spriteToKill);
+        spawnSprite(spriteToKill.death());
+    }
+    
     public void destroySprite(Sprite spriteToDest){
         physics.remove(spriteToDest);
+        monsters.remove(spriteToDest);
         if(spriteToDest.spawnsSprite){
             removeTimedSpawn(spriteToDest);
         }
     }
     
     public void spawnSprite(Sprite spriteToSpawn){
+        if(spriteToSpawn == null) return;
         physics.add(spriteToSpawn);
         monsters.add(spriteToSpawn);
         if(spriteToSpawn.spawnsSprite){
@@ -198,10 +204,14 @@ public class Main {
     }
     
     private void updateDead(){
+        ArrayList<Sprite> spritesToRem = new ArrayList<>();
         for(Sprite sprite : monsters){
             if(sprite.isDead){
-                destroySprite(sprite);
+                spritesToRem.add(sprite);
             }
+        }
+        for(Sprite sprite : spritesToRem) {
+            killSprite(sprite);
         }
         if(((Sprite)physics.get(0)).isDead){
             System.out.println("i died");

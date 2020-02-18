@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class Bullet extends Sprite{
     public Bullet(double x, double y, double vel, Point2D.Double vector) {
     	
         super(0, x, y, 10, 10, true);
+        color = Color.DARK_GRAY;
         this.vector = vector;
         this.vel = vel;
         double dx = vector.getX()-x;
@@ -78,7 +80,7 @@ public class Bullet extends Sprite{
      */
     @Override
     public boolean interactsWith(Sprite otherSprite) {
-    	
+        otherSprite.interactsWith(this);
         return false;
     }
     

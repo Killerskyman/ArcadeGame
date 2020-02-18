@@ -1,9 +1,12 @@
+import java.awt.*;
+
 /**
  * monster 1 class WIP
  */
 public class Monster1 extends Sprite {
     public Monster1(double fallAccel, double x, double y) {
         super(fallAccel, x, y, true);
+        color = Color.ORANGE;
     }
     
     public Monster1(double fallAccel, double x, double y, Hero player){
@@ -35,6 +38,6 @@ public class Monster1 extends Sprite {
     @Override
     public Sprite death() {
         super.death();
-        return new Egg(0, this.getX(), this.getY());
+        return new Egg(this, 0.5, this.getX(), this.getY());
     }
 }

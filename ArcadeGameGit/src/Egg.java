@@ -1,25 +1,46 @@
+import java.awt.*;
+
 /**
  * class that is the egg
  * WIP
  */
 public class Egg extends Sprite{
     
-    public Egg(double fallAccel, double x, double y) {
+    private Sprite spriteToSpawn;
+    
+    public Egg(Sprite spriteToSpawn, double fallAccel, double x, double y) {
         super(fallAccel, x, y, true);
+        color = Color.YELLOW;
+        spawnsSprite = true;
+        this.spriteToSpawn = spriteToSpawn;
     }
     
     @Override
     public Sprite spawning() {
-        return null;
+        spriteToSpawn.setX(getX());
+        spriteToSpawn.setY(getY());
+        isDead = true;
+        spriteToSpawn.isDead = false;
+        return spriteToSpawn;
+    }
+    
+    @Override
+    public int spawnTiming() {
+        return 100;
     }
     
     @Override
     public boolean interactsWith(Sprite otherSprite) {
-        return false;
+        if(otherSprite.isFriendly) return true;
+        else if(otherSprite.getJoustHeight() < getJoustHeight()){
+            isDead = true;
+            return false;
+        }
+        return true;
     }
     
     @Override
     public double getJoustHeight() {
-        return 0;
+        return Double.MAX_VALUE;
     }
 }

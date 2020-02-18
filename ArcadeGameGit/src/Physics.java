@@ -5,6 +5,7 @@ import java.util.ArrayList;
  * class defines what a rectangular physics object should have and has associated methods for doing physics calculations
  */
 public abstract class Physics{
+    public Color color;
     private double x;
     private double y;
     private double height = 40;
@@ -151,7 +152,8 @@ public abstract class Physics{
     }
     
     public abstract void drawOn(Graphics2D g);
-
+    
+    private static boolean physicsDebug = false;
     public static void updatePhysics(ArrayList<Physics> physics){
         for(Physics checking : physics){
             boolean shouldNotFall = false;

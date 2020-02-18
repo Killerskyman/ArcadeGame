@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.awt.geom.Point2D;
 
 /**
@@ -7,6 +8,7 @@ public class Monster2 extends Sprite {
     
     public Monster2(double fallAccel, double x, double y) {
         super(fallAccel, x, y, true);
+        color = Color.RED;
         isMonster = true;
         spawnsSprite = true;
     }
@@ -49,6 +51,6 @@ public class Monster2 extends Sprite {
     @Override
     public Sprite death() {
         super.death();
-        return new Egg(0, getX(), getY());
+        return new Egg(this,0.5, getX(), getY());
     }
 }

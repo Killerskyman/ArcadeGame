@@ -98,6 +98,7 @@ public abstract class Sprite extends Physics {
     
     @Override
     public void drawOn(Graphics2D g) {
+        g.setColor(color);
         g.fill(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight()));
     }
 
