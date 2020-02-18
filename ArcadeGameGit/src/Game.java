@@ -15,13 +15,18 @@ import java.util.HashMap;
  * @author Skyler Cleland and Daniel Vega
  *
  */
-public class Main {
+public class Game {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new Main();
+        loadLevels(levels, new ArrayList<>(Arrays.asList("testLvl.txt", "New Text Document.txt")));
+        JFrame frame = new JFrame("The Game");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1920/2, 1080/2);
+		new Game(frame);
+		frame.setVisible(true);
 	}
 
 	//TODO: adjust init values of arraylists as program expands
@@ -29,19 +34,18 @@ public class Main {
 	private ArrayList<Sprite> monsters = new ArrayList<>();
 	private HashMap<Integer, ActionListener> keyActions = new HashMap<>(5);
 	private HashMap<Integer, Boolean> keyStates = new HashMap<>(5);
-	private ArrayList<Level> levels = new ArrayList<>(3);
+	private static ArrayList<Level> levels = new ArrayList<>(3);
     
     /**
      * sets the game up by loading levels from files, spawning the player, binding the keys, and setting up physics relations
      */
-	public Main(){
+	public Game(JFrame frame){
 	    Hero player = new Hero(0.5, 50, 50);
         physics.add(player);
         physics.add(new LevelPlatform(-20,0,20,1100));
         physics.add(new LevelPlatform(1920, 0, 20, 1100));
         physics.add(new LevelPlatform(-20,-20, 1960, 20));
         physics.add(new LevelPlatform(-20, 1080-10, 1960, 40));
-        loadLevels(levels, new ArrayList<>(Arrays.asList("testLvl.txt", "New Text Document.txt")));
 	    switchLevel(null, levels.get(0), player);
 
 		GameComponent gamecomp = new GameComponent(physics);
@@ -86,16 +90,10 @@ public class Main {
             }
         });
 	    gamecomp.setFocusable(true);
-
-        JFrame frame = new JFrame();
-        frame.setSize(1920/2, 1080/2);
-        frame.setTitle("Milestone 1 Test");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(gamecomp, BorderLayout.CENTER);
         Timer timer = new Timer(20, new GameTickList(gamecomp));
         timer.addActionListener(new updateBinds());
         timer.start();
-        frame.setVisible(true);
 	}
     
     /**
@@ -103,7 +101,7 @@ public class Main {
      * @param levels arraylist to add the levels to
      * @param strings arraylist contain all the filenames of the level txt files
      */
-    private void loadLevels(ArrayList<Level> levels, ArrayList<String> strings) {
+    private static void loadLevels(ArrayList<Level> levels, ArrayList<String> strings) {
         for(String filename : strings){
             try{
                 levels.add(new Level(filename));
