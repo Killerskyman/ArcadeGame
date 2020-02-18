@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 /**
  * level platform that is a physics object and owned by a level
@@ -30,6 +31,7 @@ public class LevelPlatform extends Physics {
 
     @Override
     public void drawOn(Graphics2D g) {
+        g.setColor(Color.BLACK);
         g.fill(new Rectangle2D.Double(getX(), getY(),getWidth(), getHeight()));
     }
 }

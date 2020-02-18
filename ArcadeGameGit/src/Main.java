@@ -89,7 +89,7 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(gamecomp, BorderLayout.CENTER);
         Timer timer = new Timer(20, new GameTickList(gamecomp));
-        timer.addActionListener(new updateMove());
+        timer.addActionListener(new updateBinds());
         timer.start();
         frame.setVisible(true);
 	}
@@ -118,10 +118,9 @@ public class Main {
     public void switchLevel(Level remove, Level add, Hero player){
         if(remove != null) {
             remove.removePlatsFromPhysics(physics);
-            for(Sprite monster : monsters){
+            for(Sprite monster : new ArrayList<>(monsters)){
                 destroySprite(monster);
             }
-            monsters.clear();
         }
 	    add.addPlatsToPhysics(physics);
         for(Point2D spawn : add.getMonsterSpawns()){
@@ -134,14 +133,35 @@ public class Main {
 	    add.spawnHero(player);
     }
     
+    /**
+     * kills the sprite
+     *
+     * removes the sprite from the necessary arraylists and spawns the new sprite upon death if needed
+     * @param spriteToKill
+     */
+    public void killSprite(Sprite spriteToKill){
+        destroySprite(spriteToKill);
+        spawnSprite(spriteToKill.death());
+    }
+    
+    /**
+     * only removes the sprite from the necessary arraylists,
+     * @param spriteToDest
+     */
     public void destroySprite(Sprite spriteToDest){
         physics.remove(spriteToDest);
+        monsters.remove(spriteToDest);
         if(spriteToDest.spawnsSprite){
             removeTimedSpawn(spriteToDest);
         }
     }
     
+    /**
+     * adds the sprite to the necessary arraylists and spawnings, may be null
+     * @param spriteToSpawn
+     */
     public void spawnSprite(Sprite spriteToSpawn){
+        if(spriteToSpawn == null) return;
         physics.add(spriteToSpawn);
         monsters.add(spriteToSpawn);
         if(spriteToSpawn.spawnsSprite){
@@ -176,16 +196,29 @@ public class Main {
     
     private HashMap<Sprite, Integer> timedSpawns = new HashMap<>();
     private HashMap<Sprite, Integer> currentTimeSpawns = new HashMap<>();
+    
+    /**
+     * creates a new timed spawn to check by adding the proper vales to the hashmaps
+     * @param sprite
+     * @param cyclesToWait
+     */
     private void makeTimedSpawn(Sprite sprite, int cyclesToWait){
         timedSpawns.put(sprite, cyclesToWait);
         currentTimeSpawns.put(sprite, 0);
     }
     
+    /**
+     * removes a timed spawn if it exists from the proper hashmaps
+     * @param spriteToRem
+     */
     private void removeTimedSpawn(Sprite spriteToRem){
         timedSpawns.remove(spriteToRem);
         currentTimeSpawns.remove(spriteToRem);
     }
     
+    /**
+     * updates any timed spawns that are in the hashmaps
+     */
     private void updateTimedSpawns(){
         for(Sprite sprite : timedSpawns.keySet()){
             if(timedSpawns.get(sprite) > currentTimeSpawns.get(sprite)){
@@ -198,9 +231,27 @@ public class Main {
     }
     
     /**
+     * removes any monsters that are marked with isDead and marks if the hero has died
+     */
+    private void updateDead(){
+        ArrayList<Sprite> spritesToRem = new ArrayList<>();
+        for(Sprite sprite : monsters){
+            if(sprite.isDead){
+                spritesToRem.add(sprite);
+            }
+        }
+        for(Sprite sprite : spritesToRem) {
+            killSprite(sprite);
+        }
+        if(((Sprite)physics.get(0)).isDead){
+            System.out.println("i died");
+        }
+    }
+    
+    /**
      * ActionListener to update all the keybinds made from makeBinding
      */
-    private class updateMove implements ActionListener{
+    private class updateBinds implements ActionListener{
     
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -226,6 +277,7 @@ public class Main {
 	        Movement.updateMovement(monsters);
 	        updateTimedSpawns();
 	        updatePhysics();
+	        updateDead();
 	        component.repaint();
         }
     }

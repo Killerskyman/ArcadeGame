@@ -5,6 +5,7 @@ import java.util.ArrayList;
  * class defines what a rectangular physics object should have and has associated methods for doing physics calculations
  */
 public abstract class Physics{
+    public Color color;
     private double x;
     private double y;
     private double height = 40;
@@ -52,8 +53,17 @@ public abstract class Physics{
         if(p.contains(getX(), getLowerY())) pointCols[3] = true;
         return pointCols;
     }
-
+    
+    /**
+     * what to do when this physics object collides with p physics object
+     * @param p object that was collided with
+     * @param pointOtherPhysics array of booleans indicating all the corners of this object that are inside p object
+     * @return whether the object should be falling after the collision
+     */
     public abstract boolean physicsCollision(Physics p, boolean[] pointOtherPhysics);
+    public boolean interactsWith(Physics p){
+        return true;
+    }
 
     public void setFalling(boolean isFalling){
         this.isFalling = isFalling;
@@ -148,16 +158,21 @@ public abstract class Physics{
     }
     
     public abstract void drawOn(Graphics2D g);
-
+    
+    private static boolean physicsDebug = false; //for intellij debugging with conditional breakpoints
+    
+    /**
+     * updates the physics engine for the arraylist of the physics provided
+     * @param physics list of objects to update physics for
+     */
     public static void updatePhysics(ArrayList<Physics> physics){
         for(Physics checking : physics){
             boolean shouldNotFall = false;
             for(Physics checker : physics){
                 if(checking != checker){
                     boolean[] col = checking.doesCollideWith(checker);
-                    shouldNotFall = shouldNotFall || !checking.physicsCollision(checker, col);
-                    boolean[] opcol = {col[2], col[3], col[0], col[1]};
-                    checker.physicsCollision(checking, opcol);
+                    boolean shouldNotFallHere = !checking.physicsCollision(checker, col);
+                    shouldNotFall = shouldNotFall || shouldNotFallHere;
                 }
             }
             checking.setFalling(!shouldNotFall);
