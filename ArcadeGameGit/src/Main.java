@@ -197,6 +197,17 @@ public class Main {
         }
     }
     
+    private void updateDead(){
+        for(Sprite sprite : monsters){
+            if(sprite.isDead){
+                destroySprite(sprite);
+            }
+        }
+        if(((Sprite)physics.get(0)).isDead){
+            System.out.println("i died");
+        }
+    }
+    
     /**
      * ActionListener to update all the keybinds made from makeBinding
      */
@@ -226,6 +237,7 @@ public class Main {
 	        Movement.updateMovement(monsters);
 	        updateTimedSpawns();
 	        updatePhysics();
+	        updateDead();
 	        component.repaint();
         }
     }

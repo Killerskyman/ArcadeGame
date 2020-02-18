@@ -20,7 +20,7 @@ public class Monster1 extends Sprite {
     @Override
     public boolean interactsWith(Sprite p) {
         if(p.isFriendly) return true;
-        if(p.getJoustHeight() > getJoustHeight()){
+        else if(p.getJoustHeight() < getJoustHeight()){
             isDead = true;
             return false;
         }

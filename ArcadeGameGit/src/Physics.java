@@ -158,7 +158,8 @@ public abstract class Physics{
             for(Physics checker : physics){
                 if(checking != checker){
                     boolean[] col = checking.doesCollideWith(checker);
-                    shouldNotFall = shouldNotFall || !checking.physicsCollision(checker, col);
+                    boolean shouldNotFallHere = !checking.physicsCollision(checker, col);
+                    shouldNotFall = shouldNotFall || shouldNotFallHere;
                 }
             }
             checking.setFalling(!shouldNotFall);
