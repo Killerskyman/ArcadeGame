@@ -3,7 +3,7 @@
  */
 public class Monster1 extends Sprite {
     public Monster1(double fallAccel, double x, double y) {
-        super(fallAccel, x, y);
+        super(fallAccel, x, y, true);
     }
     
     public Monster1(double fallAccel, double x, double y, Hero player){
@@ -15,19 +15,19 @@ public class Monster1 extends Sprite {
     public Sprite spawning() {
         return null;
     }
-    
+
     @Override
-    public boolean interactsWith(Sprite otherSprite) {
+    public boolean interactsWith(Sprite p) {
+        if(p.isMonster) return true;
+        if(p.getJoustHeight() > getJoustHeight()){
+            isDead = true;
+            return false;
+        }
         return true;
     }
-    
+
     @Override
     public double getJoustHeight() {
-        return 0;
-    }
-    
-    @Override
-    public void death() {
-    
+        return this.getY();
     }
 }

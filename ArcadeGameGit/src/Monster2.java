@@ -6,7 +6,7 @@ import java.awt.geom.Point2D;
 public class Monster2 extends Sprite {
     
     public Monster2(double fallAccel, double x, double y) {
-        super(fallAccel, x, y);
+        super(fallAccel, x, y, true);
         spawnsSprite = true;
     }
     
@@ -29,17 +29,17 @@ public class Monster2 extends Sprite {
     }
     
     @Override
-    public boolean interactsWith(Sprite otherSprite) {
+    public boolean interactsWith(Sprite p) {
+        if(p.isMonster) return true;
+        if(p.getJoustHeight() > getJoustHeight()){
+            isDead = true;
+            return false;
+        }
         return true;
     }
     
     @Override
     public double getJoustHeight() {
-        return 0;
-    }
-    
-    @Override
-    public void death() {
-    
+        return this.getY();
     }
 }

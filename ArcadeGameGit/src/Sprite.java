@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 /**
  * defines what a movable object that interacts with others of itself should have
@@ -12,6 +13,7 @@ public abstract class Sprite extends Physics {
     private Movement mover; //how it should be moved
     public boolean isDead = false; //whether it should be deleted
     public boolean spawnsSprite = false;
+    public boolean isMonster;
     
     /**
      * creates a sprite with following characteristics
@@ -19,12 +21,14 @@ public abstract class Sprite extends Physics {
      * @param x starting x
      * @param y starting y
      */
-    public Sprite(double fallAccel, double x, double y) {
+    public Sprite(double fallAccel, double x, double y, boolean isMonster) {
         super(fallAccel, x, y);
+        this.isMonster = isMonster;
     }
     
-    public Sprite(double fallAccel, double x, double y, double w, double h){
+    public Sprite(double fallAccel, double x, double y, double w, double h, boolean isMonster){
         super(fallAccel, x, y, w, h);
+        this.isMonster = isMonster;
     }
     
     /**
@@ -123,6 +127,15 @@ public abstract class Sprite extends Physics {
     }
 
     @Override
+    public boolean interactsWith(Physics p) {
+        if(p.isSprite()){
+            return this.interactsWith((Sprite) p);
+        }else {
+            return super.interactsWith(p);
+        }
+    }
+
+    @Override
     public boolean isSprite() {
         return true;
     }
@@ -131,7 +144,9 @@ public abstract class Sprite extends Physics {
         return 0;
     }
 
-    public abstract boolean interactsWith(Sprite otherSprite);
+    public abstract boolean interactsWith(Sprite sprite);
     public abstract double getJoustHeight();
-    public abstract void death();
+    public void death(){
+        isDead = true;
+    }
 }

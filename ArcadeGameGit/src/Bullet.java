@@ -20,7 +20,7 @@ public class Bullet extends Sprite{
     	 * @param velocity of the bullet
     	 * @param direction for bullet to travel
     	 */
-        super(0, x, y, 10, 10);
+        super(0, x, y, 10, 10, true);
         this.vector = vector;
         this.vel = vel;
         double dx = vector.getX()-x;
