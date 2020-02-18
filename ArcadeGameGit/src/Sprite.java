@@ -1,8 +1,7 @@
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * defines what a movable object that interacts with others of itself should have
@@ -13,7 +12,8 @@ public abstract class Sprite extends Physics {
     private Movement mover; //how it should be moved
     public boolean isDead = false; //whether it should be deleted
     public boolean spawnsSprite = false;
-    public boolean isMonster;
+    public boolean isFriendly;
+    public boolean isMonster = false;
     
     /**
      * creates a sprite with following characteristics
@@ -21,14 +21,14 @@ public abstract class Sprite extends Physics {
      * @param x starting x
      * @param y starting y
      */
-    public Sprite(double fallAccel, double x, double y, boolean isMonster) {
+    public Sprite(double fallAccel, double x, double y, boolean isFriendly) {
         super(fallAccel, x, y);
-        this.isMonster = isMonster;
+        this.isFriendly = isFriendly;
     }
     
-    public Sprite(double fallAccel, double x, double y, double w, double h, boolean isMonster){
+    public Sprite(double fallAccel, double x, double y, double w, double h, boolean isFriendly){
         super(fallAccel, x, y, w, h);
-        this.isMonster = isMonster;
+        this.isFriendly = isFriendly;
     }
     
     /**
@@ -40,10 +40,11 @@ public abstract class Sprite extends Physics {
     @Override
     public boolean physicsCollision(Physics p, boolean[] pointOtherPhysics) {
         boolean continuePhysics = true;
-        if(p.isSprite()){//check to see if the other object is a sprite and interact with it
+        boolean[] noContact = {false, false, false, false};
+        if(p.isSprite() && !(Arrays.equals(pointOtherPhysics, noContact))){//check to see if the other object is a sprite and interact with it
             continuePhysics = this.interactsWith((Sprite) p);
         }
-        if(!continuePhysics) return getFalling();
+        if(!continuePhysics) return true;
         boolean shouldFall = true;
         if(pointOtherPhysics[0] && pointOtherPhysics[1])setY(getY()+PERCENTMOVEPHYSICS*(p.getLowerY()-getY()));
         else if(pointOtherPhysics[1] && pointOtherPhysics[2])setX(getX()-PERCENTMOVEPHYSICS*(getRightX()-p.getX()));
@@ -97,6 +98,7 @@ public abstract class Sprite extends Physics {
     
     @Override
     public void drawOn(Graphics2D g) {
+        g.setColor(color);
         g.fill(new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight()));
     }
 
@@ -146,7 +148,8 @@ public abstract class Sprite extends Physics {
 
     public abstract boolean interactsWith(Sprite sprite);
     public abstract double getJoustHeight();
-    public void death(){
+    public Sprite death(){
         isDead = true;
+        return null;
     }
 }

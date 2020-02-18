@@ -31,6 +31,7 @@ public class LevelPlatform extends Physics {
 
     @Override
     public void drawOn(Graphics2D g) {
+        g.setColor(Color.BLACK);
         g.fill(new Rectangle2D.Double(getX(), getY(),getWidth(), getHeight()));
     }
 }

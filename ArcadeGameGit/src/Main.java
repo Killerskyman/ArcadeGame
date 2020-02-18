@@ -89,7 +89,7 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(gamecomp, BorderLayout.CENTER);
         Timer timer = new Timer(20, new GameTickList(gamecomp));
-        timer.addActionListener(new updateMove());
+        timer.addActionListener(new updateBinds());
         timer.start();
         frame.setVisible(true);
 	}
@@ -118,10 +118,9 @@ public class Main {
     public void switchLevel(Level remove, Level add, Hero player){
         if(remove != null) {
             remove.removePlatsFromPhysics(physics);
-            for(Sprite monster : monsters){
+            for(Sprite monster : new ArrayList<>(monsters)){
                 destroySprite(monster);
             }
-            monsters.clear();
         }
 	    add.addPlatsToPhysics(physics);
         for(Point2D spawn : add.getMonsterSpawns()){
@@ -134,14 +133,21 @@ public class Main {
 	    add.spawnHero(player);
     }
     
+    public void killSprite(Sprite spriteToKill){
+        destroySprite(spriteToKill);
+        spawnSprite(spriteToKill.death());
+    }
+    
     public void destroySprite(Sprite spriteToDest){
         physics.remove(spriteToDest);
+        monsters.remove(spriteToDest);
         if(spriteToDest.spawnsSprite){
             removeTimedSpawn(spriteToDest);
         }
     }
     
     public void spawnSprite(Sprite spriteToSpawn){
+        if(spriteToSpawn == null) return;
         physics.add(spriteToSpawn);
         monsters.add(spriteToSpawn);
         if(spriteToSpawn.spawnsSprite){
@@ -197,10 +203,25 @@ public class Main {
         }
     }
     
+    private void updateDead(){
+        ArrayList<Sprite> spritesToRem = new ArrayList<>();
+        for(Sprite sprite : monsters){
+            if(sprite.isDead){
+                spritesToRem.add(sprite);
+            }
+        }
+        for(Sprite sprite : spritesToRem) {
+            killSprite(sprite);
+        }
+        if(((Sprite)physics.get(0)).isDead){
+            System.out.println("i died");
+        }
+    }
+    
     /**
      * ActionListener to update all the keybinds made from makeBinding
      */
-    private class updateMove implements ActionListener{
+    private class updateBinds implements ActionListener{
     
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -226,6 +247,7 @@ public class Main {
 	        Movement.updateMovement(monsters);
 	        updateTimedSpawns();
 	        updatePhysics();
+	        updateDead();
 	        component.repaint();
         }
     }

@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.awt.geom.Point2D;
 
 /**
@@ -7,11 +8,15 @@ public class Monster2 extends Sprite {
     
     public Monster2(double fallAccel, double x, double y) {
         super(fallAccel, x, y, true);
+        color = Color.RED;
+        isMonster = true;
         spawnsSprite = true;
     }
     
     public Monster2(double fallAccel, double x, double y, Hero player){
         this(fallAccel, x, y);
+        isMonster = true;
+        spawnsSprite = true;
         this.addMover(new AIMovement(this, player));
     }
     
@@ -30,8 +35,8 @@ public class Monster2 extends Sprite {
     
     @Override
     public boolean interactsWith(Sprite p) {
-        if(p.isMonster) return true;
-        if(p.getJoustHeight() > getJoustHeight()){
+        if(p.isFriendly) return true;
+        else if(p.getJoustHeight() < getJoustHeight()){
             isDead = true;
             return false;
         }
@@ -41,5 +46,11 @@ public class Monster2 extends Sprite {
     @Override
     public double getJoustHeight() {
         return this.getY();
+    }
+    
+    @Override
+    public Sprite death() {
+        super.death();
+        return new Egg(this,0.5, getX(), getY());
     }
 }
