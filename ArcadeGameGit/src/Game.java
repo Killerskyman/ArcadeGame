@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -16,17 +15,17 @@ import java.util.HashMap;
  *
  */
 public class Game {
+    
+ 
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-        loadLevels(levels, new ArrayList<>(Arrays.asList("testLvl.txt", "New Text Document.txt")));
         JFrame frame = new JFrame("The Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1920/2, 1080/2);
-		new Game(frame);
-		frame.setVisible(true);
+        Menus.loadStartMenu(frame);
 	}
 
 	//TODO: adjust init values of arraylists as program expands
@@ -34,29 +33,35 @@ public class Game {
 	private ArrayList<Sprite> monsters = new ArrayList<>();
 	private HashMap<Integer, ActionListener> keyActions = new HashMap<>(5);
 	private HashMap<Integer, Boolean> keyStates = new HashMap<>(5);
-	private static ArrayList<Level> levels = new ArrayList<>(3);
-    
+	public static ArrayList<Level> levels = new ArrayList<>(3);
+	public static int playerScore = 0;
+	private Hero player;
+    private JFrame frame;
+    private JLabel gameScore;
+    private GameComponent gamecomp;
+    private Timer timer;
     /**
      * sets the game up by loading levels from files, spawning the player, binding the keys, and setting up physics relations
      */
 	public Game(JFrame frame){
-	    Hero player = new Hero(0.5, 50, 50);
+	    this.frame = frame;
+	    player = new Hero(0.5, 50, 50);
         physics.add(player);
         physics.add(new LevelPlatform(-20,0,20,1100));
         physics.add(new LevelPlatform(1920, 0, 20, 1100));
         physics.add(new LevelPlatform(-20,-20, 1960, 20));
         physics.add(new LevelPlatform(-20, 1080-10, 1960, 40));
 	    switchLevel(null, levels.get(0), player);
-
-		GameComponent gamecomp = new GameComponent(physics);
-	    ComponentInputMap inputMap = new ComponentInputMap(gamecomp);
+        
+        gamecomp = new GameComponent(physics);
+        ComponentInputMap inputMap = new ComponentInputMap(gamecomp);
 	    ActionMap actMap = new ActionMap();
 	    makeBinding(KeyEvent.VK_LEFT, player.getAction(UserMovement.ActionListIndex.LEFT.getIndex()), inputMap, actMap);
 	    makeBinding(KeyEvent.VK_RIGHT, player.getAction(UserMovement.ActionListIndex.RIGHT.getIndex()), inputMap, actMap);
 	    makeBinding(KeyEvent.VK_UP, player.getAction(UserMovement.ActionListIndex.UP.getIndex()), inputMap, actMap);
         gamecomp.setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW, inputMap);
         gamecomp.setActionMap(actMap);
-
+        
 	    gamecomp.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -90,9 +95,19 @@ public class Game {
             }
         });
 	    gamecomp.setFocusable(true);
+	    
+        gameScore = new JLabel("Player Score: ");
+        
         frame.add(gamecomp, BorderLayout.CENTER);
-        Timer timer = new Timer(20, new GameTickList(gamecomp));
-        timer.addActionListener(new updateBinds());
+        frame.add(gameScore, BorderLayout.NORTH);
+        frame.repaint();
+        frame.setVisible(true);
+        gamecomp.requestFocus();
+        if(timer == null) {
+            timer = new Timer(20, new GameTickList(gamecomp));
+            timer.addActionListener(new updateBinds());
+            timer.addActionListener(e -> gameScore.setText(gameScore.getText().split(":")[0] + ":  " + playerScore));
+        }
         timer.start();
 	}
     
@@ -101,10 +116,12 @@ public class Game {
      * @param levels arraylist to add the levels to
      * @param strings arraylist contain all the filenames of the level txt files
      */
-    private static void loadLevels(ArrayList<Level> levels, ArrayList<String> strings) {
+    public static void loadLevels(ArrayList<Level> levels, ArrayList<String> strings) {
+        System.out.println("Levels Loaded from files: ");
         for(String filename : strings){
             try{
                 levels.add(new Level(filename));
+                System.out.println("\t"+filename);
             }catch(Exception e){
                 System.err.println("FAILED TO LOAD LEVEL FROM FILE: " + filename);
             }
@@ -245,8 +262,11 @@ public class Game {
         for(Sprite sprite : spritesToRem) {
             killSprite(sprite);
         }
-        if(((Sprite)physics.get(0)).isDead){
-            System.out.println("i died");
+        if(player.isDead){
+            frame.remove(gamecomp);
+            frame.remove(gameScore);
+            timer.stop();
+            Menus.loadDeathMenu(frame);
         }
     }
     

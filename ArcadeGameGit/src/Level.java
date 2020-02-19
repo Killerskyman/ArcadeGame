@@ -25,7 +25,7 @@ public class Level extends JComponent {
      * @throws Exception throws multiple exceptions
      */
     public Level(String filename) throws Exception{
-        
+        this.filename = filename;
         BufferedReader sc = new BufferedReader(new FileReader(filename));
         heroSpawn = sc.readLine();
         String[] heroArgs = heroSpawn.split(";");
@@ -85,5 +85,17 @@ public class Level extends JComponent {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         
+    }
+    
+    @Override
+    public String toString() {
+        return "Level{" +
+                       "filename='" + filename + '\'' +
+                       ", platforms=" + platforms +
+                       ", monsterSpawns=" + monsterSpawns +
+                       ", heroSpawn='" + heroSpawn + '\'' +
+                       ", heroSpawnX=" + heroSpawnX +
+                       ", heroSpawnY=" + heroSpawnY +
+                       '}';
     }
 }
