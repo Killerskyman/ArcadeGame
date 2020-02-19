@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -14,6 +15,7 @@ public class Menus{
         menu.add(newGame);
         menu.add(loadGame);
         menu.add(viewControls);
+        menu.setLayout(new BoxLayout(menu, BoxLayout.Y_AXIS));
         frame.add(menu);
         Game.loadLevels(Game.levels, getAllLevelFileNames("Levels"));
         newGame.addActionListener(e -> {
@@ -39,6 +41,9 @@ public class Menus{
     
     private static ArrayList<SaveGame> savedGames = new ArrayList<>();
     private static void loadGameLoadMenu(JFrame frame){
+        JPanel center = new JPanel();
+        for(SaveGame game : savedGames){
+        }
         JPanel menu = new JPanel();
         makeSubMenu(frame, menu);
     }
