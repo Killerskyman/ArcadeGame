@@ -34,6 +34,7 @@ public class Game {
 	private HashMap<Integer, ActionListener> keyActions = new HashMap<>(5);
 	private HashMap<Integer, Boolean> keyStates = new HashMap<>(5);
 	public static ArrayList<Level> levels = new ArrayList<>(3);
+	public static int currentLevel = 0;
 	public static int playerScore = 0;
 	private Hero player;
     private JFrame frame;
@@ -70,7 +71,7 @@ public class Game {
         
             @Override
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_U) switchLevel(levels.get(0), levels.get(1), player);
+                if(e.getKeyCode() == KeyEvent.VK_U) moveUpLevel(player);
             }
         
             @Override
@@ -86,7 +87,7 @@ public class Game {
         
             @Override
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_D) switchLevel(levels.get(1), levels.get(0), player);
+                if(e.getKeyCode() == KeyEvent.VK_D) moveDownLevel(player);
             }
         
             @Override
@@ -150,6 +151,20 @@ public class Game {
             }
         }
 	    add.spawnHero(player);
+    }
+
+    public void moveUpLevel(Hero player){
+        if(currentLevel < levels.size()-1){
+            switchLevel(levels.get(currentLevel), levels.get(currentLevel+1), player);
+            currentLevel++;
+        }
+    }
+
+    public void moveDownLevel(Hero player){
+        if(currentLevel > 0){
+            switchLevel(levels.get(currentLevel), levels.get(currentLevel-1), player);
+            currentLevel--;
+        }
     }
     
     /**
