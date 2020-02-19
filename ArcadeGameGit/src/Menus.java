@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class Menus{
     
     public static void loadStartMenu(JFrame frame){
+        frame.getContentPane().removeAll();
         JPanel menu = new JPanel();
         JButton newGame = new JButton("Start New Game");
         JButton loadGame = new JButton("Load Saved Game");
@@ -16,19 +17,17 @@ public class Menus{
         menu.add(loadGame);
         menu.add(viewControls);
         menu.setLayout(new BoxLayout(menu, BoxLayout.Y_AXIS));
-        frame.add(menu);
+        menu.setMaximumSize(menu.getPreferredSize());
+        frame.add(menu, BorderLayout.SOUTH);
         Game.loadLevels(Game.levels, getAllLevelFileNames("Levels"));
         newGame.addActionListener(e -> {
-            frame.remove(menu);
             Game.playerScore = 0;
             new Game(frame);
         });
         loadGame.addActionListener(e -> {
-            frame.remove(menu);
             loadGameLoadMenu(frame);
         });
         viewControls.addActionListener(e -> {
-            frame.remove(menu);
             loadViewControls(frame);
         });
         frame.repaint();
@@ -39,8 +38,18 @@ public class Menus{
         loadStartMenu(frame);
     }
     
+    public static void loadSaveMenu(JFrame frame){
+        frame.getContentPane().removeAll();
+        JPanel menu = new JPanel();
+        JPanel getinfo = new JPanel();
+        JFormattedTextField playerName = new JFormattedTextField();
+        JButton saveGame = new JButton("Confirm Save Game");
+        
+    }
+    
     private static ArrayList<SaveGame> savedGames = new ArrayList<>();
     private static void loadGameLoadMenu(JFrame frame){
+        frame.getContentPane().removeAll();
         JPanel center = new JPanel();
         for(SaveGame game : savedGames){
         }
@@ -49,10 +58,17 @@ public class Menus{
     }
     
     private static void loadViewControls(JFrame frame){
+        frame.getContentPane().removeAll();
         JPanel menu = new JPanel();
-        menu.add(new JLabel("Left Arrow Key -> move Left"));
-        menu.add(new JLabel("Right Arrow Key -> move Right"));
-        menu.add(new JLabel("Up Arrow Key -> Jump"));
+        JPanel info = new JPanel();
+        info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
+        info.add(new JLabel("Left Arrow Key -> move Left"));
+        info.add(new JLabel("Right Arrow Key -> move Right"));
+        info.add(new JLabel("Up Arrow Key -> Jump"));
+        for(Component component : info.getComponents()) {
+            ((JComponent) component).setAlignmentX(Component.CENTER_ALIGNMENT);
+        }
+        frame.add(info, BorderLayout.CENTER);
         makeSubMenu(frame, menu);
     }
     
@@ -60,10 +76,11 @@ public class Menus{
         JButton mainMenu = new JButton("Main Menu");
         menu.add(mainMenu);
         mainMenu.addActionListener(e -> {
-            frame.remove(menu);
             loadStartMenu(frame);
         });
-        frame.add(menu);
+        menu.setMaximumSize(menu.getPreferredSize());
+        menu.setLayout(new BoxLayout(menu, BoxLayout.Y_AXIS));
+        frame.add(menu, BorderLayout.SOUTH);
         frame.repaint();
         frame.setVisible(true);
     }

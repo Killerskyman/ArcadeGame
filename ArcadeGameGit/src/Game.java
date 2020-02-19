@@ -45,6 +45,7 @@ public class Game {
      * sets the game up by loading levels from files, spawning the player, binding the keys, and setting up physics relations
      */
 	public Game(JFrame frame){
+        frame.getContentPane().removeAll();
 	    this.frame = frame;
 	    player = new Hero(0.5, 50, 50);
         physics.add(player);
@@ -278,8 +279,6 @@ public class Game {
             killSprite(sprite);
         }
         if(player.isDead){
-            frame.remove(gamecomp);
-            frame.remove(gameScore);
             timer.stop();
             Menus.loadDeathMenu(frame);
         }

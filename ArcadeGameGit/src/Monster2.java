@@ -39,7 +39,7 @@ public class Monster2 extends Sprite {
     public Sprite spawning() {
         double x = ((AIMovement) getMover()).player.getX();
         double y = ((AIMovement) getMover()).player.getY();
-        Bullet bullet = new Bullet(getX(), getY(), new Point2D.Double(x,y));
+        Bullet bullet = new Bullet(getX()+(getWidth()/2), getY()+(getHeight()/2), new Point2D.Double(x,y));
         return bullet;
     }
     
