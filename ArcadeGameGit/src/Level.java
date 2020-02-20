@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class Level extends JComponent {
     
-    private String filename;
+    public String filename;
     private BufferedImage background;
     private ArrayList<LevelPlatform> platforms = new ArrayList<>();
     private ArrayList<Point2D> monsterSpawns = new ArrayList<>();
@@ -60,9 +60,7 @@ public class Level extends JComponent {
      * @param physics array to remove from
      */
     public void removePlatsFromPhysics(ArrayList<Physics> physics){
-        for(Physics plat : platforms){
-            physics.remove(plat);
-        }
+        physics.removeAll(platforms);
     }
     
     public ArrayList<Point2D> getMonsterSpawns(){
@@ -76,7 +74,6 @@ public class Level extends JComponent {
     public void spawnHero(Hero player) {
     	player.setX(heroSpawnX);
     	player.setY(heroSpawnY);
-    	player.setFalling(false);
     	player.updatePos(0);
     }
     

@@ -53,7 +53,7 @@ public class Egg extends Sprite{
     
     @Override
     public Sprite death() {
-        Game.playerScore++;
+        Game.playerScore = Game.playerScore + 1;
         return super.death();
     }
 }

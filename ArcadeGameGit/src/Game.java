@@ -33,7 +33,7 @@ public class Game {
 	private ArrayList<Sprite> monsters = new ArrayList<>();
 	private HashMap<Integer, ActionListener> keyActions = new HashMap<>(5);
 	private HashMap<Integer, Boolean> keyStates = new HashMap<>(5);
-	public static ArrayList<Level> levels = new ArrayList<>(3);
+	public static ArrayList<Level> levels = new ArrayList<>(10);
 	public static int currentLevel = 0;
 	public static int playerScore = 0;
 	private Hero player;
@@ -45,7 +45,12 @@ public class Game {
      * sets the game up by loading levels from files, spawning the player, binding the keys, and setting up physics relations
      */
 	public Game(JFrame frame){
+        this(frame, levels.get(0).filename, 0);
+	}
+	
+	public Game(JFrame frame, String levelFileName, int playerScore){
         frame.getContentPane().removeAll();
+        Game.playerScore = playerScore;
 	    this.frame = frame;
 	    player = new Hero(0.5, 50, 50);
         physics.add(player);
@@ -53,7 +58,7 @@ public class Game {
         physics.add(new LevelPlatform(1920, 0, 20, 1100));
         physics.add(new LevelPlatform(-20,-20, 1960, 20));
         physics.add(new LevelPlatform(-20, 1080-10, 1960, 40));
-	    switchLevel(null, levels.get(0), player);
+	    switchLevel(null, levels.get(findLevelIndex(levels, levelFileName)), player);
         
         gamecomp = new GameComponent(physics);
         ComponentInputMap inputMap = new ComponentInputMap(gamecomp);
@@ -108,7 +113,10 @@ public class Game {
         if(timer == null) {
             timer = new Timer(20, new GameTickList(gamecomp));
             timer.addActionListener(new updateBinds());
-            timer.addActionListener(e -> gameScore.setText(gameScore.getText().split(":")[0] + ":  " + playerScore));
+            timer.addActionListener(e -> {
+                gameScore.setText(gameScore.getText().split(":")[0] + ":  " + playerScore);
+                gameScore.repaint();
+            });
         }
         timer.start();
 	}
@@ -128,6 +136,15 @@ public class Game {
                 System.err.println("FAILED TO LOAD LEVEL FROM FILE: " + filename);
             }
         }
+    }
+    
+    public static int findLevelIndex(ArrayList<Level> levels, String filename){
+        for(Level level : levels){
+            if(level.filename.equals(filename)){
+                return levels.indexOf(level);
+            }
+        }
+        return -1;
     }
     
     /**
@@ -255,13 +272,17 @@ public class Game {
      * updates any timed spawns that are in the hashmaps
      */
     private void updateTimedSpawns(){
+        ArrayList<Sprite> spritesToSpawn = new ArrayList<>();
         for(Sprite sprite : timedSpawns.keySet()){
             if(timedSpawns.get(sprite) > currentTimeSpawns.get(sprite)){
                 currentTimeSpawns.put(sprite, currentTimeSpawns.get(sprite) + 1);
             }else{
-                spawnSprite(sprite.spawning());
-                currentTimeSpawns.put(sprite, 0);
+                spritesToSpawn.add(sprite);
             }
+        }
+        for(Sprite sprite : spritesToSpawn) {
+            spawnSprite(sprite.spawning());
+            currentTimeSpawns.put(sprite, 0);
         }
     }
     
