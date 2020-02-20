@@ -9,7 +9,7 @@ import java.util.ArrayList;
 /**
  * holds all the relevant information to a level and automagically loads it from a filename
  */
-public class Level extends JComponent {
+public class Level{
     
     public String filename;
     private BufferedImage background;
@@ -75,13 +75,6 @@ public class Level extends JComponent {
     	player.setX(heroSpawnX);
     	player.setY(heroSpawnY);
     	player.updatePos(0);
-    }
-    
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-        
     }
     
     @Override

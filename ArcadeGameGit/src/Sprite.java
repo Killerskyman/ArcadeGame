@@ -118,8 +118,13 @@ public abstract class Sprite extends Physics {
      * what to do when spawning a new sprite
      * @return the sprite to spawn
      */
-    public abstract Sprite spawning();
+    public Sprite spawning(){
+        return null;
+    }
     
+    /**
+     * updates this sprites Movement Object
+     */
     public void updateMovement(){
         if(mover != null) {
             mover.updatePos();
@@ -176,8 +181,21 @@ public abstract class Sprite extends Physics {
      * @param sprite sprite that this sprite interacts with
      * @return whether to continue physics on the object
      */
-    public abstract boolean interactsWith(Sprite sprite);
-    public abstract double getJoustHeight();
+    public boolean interactsWith(Sprite sprite){
+        if(sprite.getJoustHeight() < getJoustHeight()){
+            isDead = true;
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * the height at which to compare for jousting, lower numbers beat higher numbers
+     * @return
+     */
+    public double getJoustHeight(){
+        return getY();
+    }
     
     /**
      * what to do at death, only modify this objects parameters, removing the object from specific arraylists is taken care of elsewhere

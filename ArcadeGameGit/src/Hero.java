@@ -24,21 +24,6 @@ public class Hero extends Sprite{
         return null;
     }
     
-    @Override
-    public boolean interactsWith(Sprite otherSprite) {
-    	
-        if(otherSprite.getJoustHeight() < this.getJoustHeight()){
-            isDead = true;
-            return false;
-        }
-        return true;
-    }
-    
-    @Override
-    public double getJoustHeight() {
-        return this.getY();
-    }
-    
     public int getHealth(){
         return health;
     }

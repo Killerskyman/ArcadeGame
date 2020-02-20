@@ -5,10 +5,10 @@ import java.util.ArrayList;
 
 /**
  * class that is the bullet from monster2
- * WIP
  */
 public class Bullet extends Sprite{
     
+    private static final double WIDTH = 20, HEIGHT= 20;
     private double xv;
     private double yv;
     private Point2D.Double vector;
@@ -23,7 +23,7 @@ public class Bullet extends Sprite{
      */
     public Bullet(double x, double y, double vel, Point2D.Double vector) {
     	
-        super(0, x, y, 20, 20, true);
+        super(0, x, y, WIDTH, HEIGHT, true);
         color = Color.DARK_GRAY;
         this.vector = vector;
         this.vel = vel;
@@ -37,9 +37,6 @@ public class Bullet extends Sprite{
             public void updatePos() {
                 sprite.setX(sprite.getX()+xv);
                 sprite.setY(sprite.getY()+yv);
-                if(getX() < 0 || getY() < 0 || getRightX() > 1920 || getLowerY() > 1080-10){
-                    sprite.isDead = true;
-                }
             }
     
             @Override
@@ -72,11 +69,6 @@ public class Bullet extends Sprite{
      */
     public Bullet(double x, double y, Point2D.Double vector){
         this(x,y,15,vector);
-    }
-    
-    @Override
-    public Sprite spawning() {
-        return null;
     }
 
     @Override

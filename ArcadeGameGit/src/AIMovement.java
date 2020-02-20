@@ -3,7 +3,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 /**
- * class that controls AI movement WIP
+ * class that controls AI movement
  */
 public class AIMovement extends Movement{
     
@@ -22,9 +22,6 @@ public class AIMovement extends Movement{
         this.player = player;
     }
     
-    /**
-     * changes the AI's position based on where the player is
-     */
     @Override
     public void updatePos() {
         if(player.getY()+5 < sprite.getY()){
@@ -37,25 +34,16 @@ public class AIMovement extends Movement{
         }
     }
     
-    /**
-     * updates the sprite's X value to make it move left
-     */
     @Override
     public void moveLeft() {
         sprite.setX(sprite.getX() - horzMove);
     }
     
-    /**
-     * updates the sprite's X value to make it move right
-     */
     @Override
     public void moveRight() {
     	sprite.setX(sprite.getX() + horzMove);
     }
     
-    /**
-     * updates sprite's jump velocity
-     */
     @Override
     public void jump() {
     	sprite.setJumpVely(-jumpVel);

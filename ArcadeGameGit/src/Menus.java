@@ -3,8 +3,16 @@ import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * holds all the methods needed to load the menus for the game and navigate between them
+ * it also handles loading in information about previous games from files
+ */
 public class Menus{
     
+    /**
+     * sets up the start menu overtop anything else the given frame
+     * @param frame frame to display to
+     */
     public static void loadStartMenu(JFrame frame){
         frame.getContentPane().removeAll();
         JPanel menu = new JPanel();
@@ -32,6 +40,10 @@ public class Menus{
         frame.setVisible(true);
     }
     
+    /**
+     * sets up the death menu
+     * @param frame frame to display to
+     */
     public static void loadDeathMenu(JFrame frame){
         frame.getContentPane().removeAll();
         loadLeaderBoard("leaderBoard.txt");
@@ -59,6 +71,10 @@ public class Menus{
         makeSubMenu(frame, menu);
     }
     
+    /**
+     * inserts the given entry into the leaderBoard ArrayList in a sorted manner
+     * @param entry the LeaderBoard to add
+     */
     private static void insertEntryToLeaderBoard(LeaderBoard entry){
         for(int i = 0, size = leaderBoards.size(); i < size; i++) {
             if(leaderBoards.get(i).playerScore < entry.playerScore){
@@ -69,6 +85,10 @@ public class Menus{
         leaderBoards.add(entry);
     }
     
+    /**
+     * adds the leaderBoard and all its info to the JPanel
+     * @param panel panel to add info to
+     */
     private static void addLeaderBoardToJpanel(JPanel panel){
         int saveCount = 1;
         for(LeaderBoard game : leaderBoards){
@@ -84,6 +104,11 @@ public class Menus{
     }
     
     private static ArrayList<LeaderBoard> leaderBoards = new ArrayList<>();
+    
+    /**
+     * loads the information from the specified file into the leaderBoard ArrayList
+     * @param leaderBoardFile file to load from
+     */
     public static void loadLeaderBoard(String leaderBoardFile){
         leaderBoards.clear();
         try{
@@ -99,6 +124,10 @@ public class Menus{
         }
     }
     
+    /**
+     * saves all information in the leaderBoard ArrayList to the specified file
+     * @param leaderBoardFile
+     */
     public static void saveLeaderBoard(String leaderBoardFile){
         try {
             FileWriter saves = new FileWriter(leaderBoardFile);
@@ -114,6 +143,12 @@ public class Menus{
         }
     }
     
+    /**
+     * loads the menu to save a game from
+     * @param frame frame to display to
+     * @param levelFileName current level based on the filename
+     * @param playerHealth current player health
+     */
     public static void loadSaveMenu(JFrame frame, String levelFileName, int playerHealth){
         frame.getContentPane().removeAll();
         JPanel menu = new JPanel();
@@ -130,6 +165,11 @@ public class Menus{
         makeSubMenu(frame, menu);
     }
     
+    /**
+     * saves the saveGame to the specified file
+     * @param saveFileName file to save to
+     * @param game the SaveGame to pull information from
+     */
     private static void addSaveToSaveGame(String saveFileName, SaveGame game){
         try {
             FileWriter saves = new FileWriter(saveFileName, true);
@@ -148,6 +188,11 @@ public class Menus{
     }
     
     private static ArrayList<SaveGame> savedGames = new ArrayList<>();
+    
+    /**
+     * load the menu that is used for loading a game
+     * @param frame frame to display to
+     */
     private static void loadGameLoadMenu(JFrame frame){
         loadSaveGames("saveGames.txt");
         frame.getContentPane().removeAll();
@@ -171,6 +216,10 @@ public class Menus{
         makeSubMenu(frame, menu);
     }
     
+    /**
+     * loads the menu where you can see what buttons do
+     * @param frame frame to display to
+     */
     private static void loadViewControls(JFrame frame){
         frame.getContentPane().removeAll();
         JPanel menu = new JPanel();
@@ -186,6 +235,11 @@ public class Menus{
         makeSubMenu(frame, menu);
     }
     
+    /**
+     * makes the back button and organizes the menu items in the specified Panel
+     * @param frame frame to display to
+     * @param menu panel to organize items into a menu
+     */
     private static void makeSubMenu(JFrame frame, JPanel menu) {
         JButton mainMenu = new JButton("Main Menu");
         menu.add(mainMenu);
@@ -199,6 +253,10 @@ public class Menus{
         frame.setVisible(true);
     }
     
+    /**
+     * loads all the saveGames into the ArrayList from the specified file (clears before loading)
+     * @param saveGamesFile file to load from
+     */
     private static void loadSaveGames(String saveGamesFile){
         savedGames.clear();
         try{
@@ -214,6 +272,13 @@ public class Menus{
         }
     }
     
+    /**
+     * returns all the filenames in the specified folder
+     *
+     * used to load all the levels in from the Levels folder
+     * @param folderLocation folder location
+     * @return ArrayList of filenames
+     */
     private static ArrayList<String> getAllLevelFileNames(String folderLocation){
         ArrayList<String> output = new ArrayList<>();
         try{
@@ -230,6 +295,9 @@ public class Menus{
         return output;
     }
     
+    /**
+     * used to store info for the LeaderBoard
+     */
     private static class LeaderBoard{
         public String playerName;
         public int playerScore;
@@ -239,6 +307,9 @@ public class Menus{
         }
     }
     
+    /**
+     * used to store info for saving/loading a game
+     */
     private static class SaveGame{
         public String playerName;
         public int playerScore;

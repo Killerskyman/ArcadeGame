@@ -15,6 +15,12 @@ import java.util.HashMap;
  *
  */
 public class Game {
+    
+    private static final int INITSCREENSIZEWIDTH = 1920, INITSCREENSIZEHEIGHT = 1080;
+    private static final int PLAYERHEALTH = 3;
+    private static final double GRAVITY = 0.5;
+    private static final double PLAYERSIZE = 50;
+    private static final int GAMETICKSPEED = 20;
  
 	/**
 	 * @param args
@@ -22,7 +28,7 @@ public class Game {
 	public static void main(String[] args) {
         JFrame frame = new JFrame("The Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1920/2, 1080/2);
+        frame.setSize(INITSCREENSIZEWIDTH/2, INITSCREENSIZEHEIGHT/2);
         Menus.loadStartMenu(frame);
 	}
 
@@ -39,24 +45,33 @@ public class Game {
     private JLabel gameScore;
     private GameComponent gamecomp;
     private Timer timer;
+    
     /**
      * sets the game up by loading levels from files, spawning the player, binding the keys, and setting up physics relations
+     * @param frame the JFrame to display in
      */
 	public Game(JFrame frame){
-        this(frame, levels.get(0).filename, 0, 3);
+        this(frame, levels.get(0).filename, 0, PLAYERHEALTH);
 	}
-	
+    
+    /**
+     * sets the game up with some initial values
+     * @param frame the JFrame to display in
+     * @param levelFileName the filename of the initial level to start in
+     * @param playerScore initial player score
+     * @param playerHealth initial player health
+     */
 	public Game(JFrame frame, String levelFileName, int playerScore, int playerHealth){
         frame.getContentPane().removeAll();
         Game.playerScore = playerScore;
 	    this.frame = frame;
-	    player = new Hero(0.5, 50, 50);
+	    player = new Hero(GRAVITY, PLAYERSIZE, PLAYERSIZE);
 	    player.health = playerHealth;
         physics.add(player);
-        physics.add(new LevelPlatform(-20,0,20,1100));
-        physics.add(new LevelPlatform(1920, 0, 20, 1100));
-        physics.add(new LevelPlatform(-20,-20, 1960, 20));
-        physics.add(new LevelPlatform(-20, 1080-10, 1960, 40));
+        physics.add(new LevelPlatform(-20,0,20,INITSCREENSIZEHEIGHT+40));
+        physics.add(new LevelPlatform(INITSCREENSIZEWIDTH, 0, 20, INITSCREENSIZEHEIGHT+40));
+        physics.add(new LevelPlatform(-20,-20, INITSCREENSIZEWIDTH+40, 20));
+        physics.add(new LevelPlatform(-20, INITSCREENSIZEHEIGHT-10, INITSCREENSIZEWIDTH+40, 40));
         currentLevel = findLevelIndex(levels, levelFileName);
 	    switchLevel(null, levels.get(currentLevel), player);
         
@@ -118,7 +133,7 @@ public class Game {
         frame.repaint();
         frame.setVisible(true);
         gamecomp.requestFocus();
-        timer = new Timer(20, new GameTickList(gamecomp));
+        timer = new Timer(GAMETICKSPEED, new GameTickList(gamecomp));
         timer.addActionListener(new updateBinds());
         timer.addActionListener(e -> {
             gameScore.setText(gameScore.getText().split(":")[0] + ":  " + Game.getPlayerScore());
@@ -149,7 +164,13 @@ public class Game {
         }
     }
     
-    public static int findLevelIndex(ArrayList<Level> levels, String filename){
+    /**
+     * returns the index of the level int levels list based on the filename
+     * @param levels ArrayList to search through
+     * @param filename filename to find index for
+     * @return the index of the level in the ArrayList (-1 if not found)
+     */
+    private static int findLevelIndex(ArrayList<Level> levels, String filename){
         for(Level level : levels){
             if(level.filename.equals(filename)){
                 return levels.indexOf(level);
@@ -202,7 +223,7 @@ public class Game {
      * removes the sprite from the necessary arraylists and spawns the new sprite upon death if needed
      * @param spriteToKill
      */
-    public void killSprite(Sprite spriteToKill){
+    private void killSprite(Sprite spriteToKill){
         destroySprite(spriteToKill);
         Sprite spriteToSpawn = spriteToKill.death();
         if(spriteToSpawn==null && spriteToKill.getJoustHeight()>2000) Game.playerScore++;
@@ -213,7 +234,7 @@ public class Game {
      * only removes the sprite from the necessary arraylists,
      * @param spriteToDest
      */
-    public void destroySprite(Sprite spriteToDest){
+    private void destroySprite(Sprite spriteToDest){
         physics.remove(spriteToDest);
         monsters.remove(spriteToDest);
         if(spriteToDest.spawnsSprite){
@@ -225,7 +246,7 @@ public class Game {
      * adds the sprite to the necessary arraylists and spawnings, may be null
      * @param spriteToSpawn
      */
-    public void spawnSprite(Sprite spriteToSpawn){
+    private void spawnSprite(Sprite spriteToSpawn){
         if(spriteToSpawn == null) return;
         physics.add(spriteToSpawn);
         monsters.add(spriteToSpawn);
@@ -237,7 +258,7 @@ public class Game {
     /**
      * updates all objects in the physics arraylist by checking for collisions and updating their position
      */
-	public void updatePhysics(){
+	private void updatePhysics(){
 	    Physics.updatePhysics(physics);
     }
     
@@ -300,7 +321,7 @@ public class Game {
     }
     
     /**
-     * removes any monsters that are marked with isDead and marks if the hero has died
+     * removes any monsters that are marked with isDead and marks if the hero has died and takes appropriate action
      */
     private void updateDead(){
         ArrayList<Sprite> spritesToRem = new ArrayList<>();

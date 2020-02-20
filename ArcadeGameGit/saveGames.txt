@@ -1,1 +1,3 @@
 Test;5;Levels/Lvl1.txt;2
+Save2;9;Levels/Lvl2.txt;2
+Test;4;Levels/Lvl7;2

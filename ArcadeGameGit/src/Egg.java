@@ -1,11 +1,11 @@
 import java.awt.*;
 
 /**
- * class that is the egg
- * WIP
+ * class that is the egg, spawns monsters after 100 gameTicks
  */
 public class Egg extends Sprite{
     
+    private static final int SPAWNCYCLES = 100;
     private Sprite spriteToSpawn;
     
     /**
@@ -33,17 +33,13 @@ public class Egg extends Sprite{
     
     @Override
     public int spawnTiming() {
-        return 100;
+        return SPAWNCYCLES;
     }
     
     @Override
     public boolean interactsWith(Sprite otherSprite) {
         if(otherSprite.isFriendly) return true;
-        else if(otherSprite.getJoustHeight() < getJoustHeight()){
-            isDead = true;
-            return false;
-        }
-        return true;
+        return super.interactsWith(otherSprite);
     }
     
     @Override
