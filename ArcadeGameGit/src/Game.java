@@ -127,6 +127,7 @@ public class Game {
      * @param strings arraylist contain all the filenames of the level txt files
      */
     public static void loadLevels(ArrayList<Level> levels, ArrayList<String> strings) {
+        levels.clear();
         System.out.println("Levels Loaded from files: ");
         for(String filename : strings){
             try{
