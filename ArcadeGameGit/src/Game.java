@@ -15,9 +15,7 @@ import java.util.HashMap;
  *
  */
 public class Game {
-    
  
-
 	/**
 	 * @param args
 	 */
@@ -45,20 +43,22 @@ public class Game {
      * sets the game up by loading levels from files, spawning the player, binding the keys, and setting up physics relations
      */
 	public Game(JFrame frame){
-        this(frame, levels.get(0).filename, 0);
+        this(frame, levels.get(0).filename, 0, 3);
 	}
 	
-	public Game(JFrame frame, String levelFileName, int playerScore){
+	public Game(JFrame frame, String levelFileName, int playerScore, int playerHealth){
         frame.getContentPane().removeAll();
         Game.playerScore = playerScore;
 	    this.frame = frame;
 	    player = new Hero(0.5, 50, 50);
+	    player.health = playerHealth;
         physics.add(player);
         physics.add(new LevelPlatform(-20,0,20,1100));
         physics.add(new LevelPlatform(1920, 0, 20, 1100));
         physics.add(new LevelPlatform(-20,-20, 1960, 20));
         physics.add(new LevelPlatform(-20, 1080-10, 1960, 40));
-	    switchLevel(null, levels.get(findLevelIndex(levels, levelFileName)), player);
+        currentLevel = findLevelIndex(levels, levelFileName);
+	    switchLevel(null, levels.get(currentLevel), player);
         
         gamecomp = new GameComponent(physics);
         ComponentInputMap inputMap = new ComponentInputMap(gamecomp);
@@ -106,7 +106,10 @@ public class Game {
         gameScore = new JLabel("Player Score: ");
         
         JButton saveGame = new JButton("Save Game");
-        saveGame.addActionListener(e -> Menus.loadSaveMenu(frame, Game.levels.get(Game.currentLevel).filename));
+        saveGame.addActionListener(e -> {
+            timer.stop();
+            Menus.loadSaveMenu(frame, Game.levels.get(Game.currentLevel).filename, player.getHealth());
+        });
         frame.add(gamecomp, BorderLayout.CENTER);
         JPanel north = new JPanel();
         north.add(saveGame);
@@ -314,7 +317,14 @@ public class Game {
         }
         if(player.isDead){
             timer.stop();
-            Menus.loadDeathMenu(frame);
+            player.health = player.health - 1;
+            if(player.health <= 0){
+                Menus.loadDeathMenu(frame);
+            }else {
+                switchLevel(levels.get(currentLevel), levels.get(currentLevel), player);
+                player.isDead = false;
+                timer.start();
+            }
         }
     }
     

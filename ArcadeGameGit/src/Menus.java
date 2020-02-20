@@ -114,14 +114,14 @@ public class Menus{
         }
     }
     
-    public static void loadSaveMenu(JFrame frame, String levelFileName){
+    public static void loadSaveMenu(JFrame frame, String levelFileName, int playerHealth){
         frame.getContentPane().removeAll();
         JPanel menu = new JPanel();
         JPanel getinfo = new JPanel();
         JTextField playerName = new JTextField(50);
         JButton saveGame = new JButton("Confirm Save Game");
         saveGame.addActionListener(e -> {
-            addSaveToSaveGame("saveGames.txt", new SaveGame(playerName.getText(), Game.playerScore, levelFileName));
+            addSaveToSaveGame("saveGames.txt", new SaveGame(playerName.getText(), Game.playerScore, levelFileName, playerHealth));
             loadStartMenu(frame);
         });
         getinfo.add(playerName);
@@ -138,6 +138,8 @@ public class Menus{
             saves.write(String.valueOf(game.playerScore));
             saves.write(";");
             saves.write(game.levelFileName);
+            saves.write(";");
+            saves.write(String.valueOf(game.playerHealth));
             saves.write("\r\n");
             saves.close();
         }catch(IOException e) {
@@ -157,7 +159,7 @@ public class Menus{
             row.add(new JLabel(game.playerName));
             row.add(new JLabel(String.valueOf(game.playerScore)));
             JButton loadGame = new JButton("Load Game");
-            loadGame.addActionListener(e -> new Game(frame, game.levelFileName, game.playerScore));
+            loadGame.addActionListener(e -> new Game(frame, game.levelFileName, game.playerScore, game.playerHealth));
             row.add(loadGame);
             row.setAlignmentX(Component.CENTER_ALIGNMENT);
             center.add(row);
@@ -204,7 +206,7 @@ public class Menus{
             String curLine = "";
             while((curLine = saveGame.readLine()) != null){
                 String[] savedGame = curLine.split(";");
-                savedGames.add(new SaveGame(savedGame[0], Integer.parseInt(savedGame[1]), savedGame[2]));
+                savedGames.add(new SaveGame(savedGame[0], Integer.parseInt(savedGame[1]), savedGame[2], Integer.parseInt(savedGame[3])));
             }
             saveGame.close();
         }catch(Exception e){
@@ -241,10 +243,12 @@ public class Menus{
         public String playerName;
         public int playerScore;
         public String levelFileName;
-        public SaveGame(String playerName, int playerScore, String levelFileName){
+        public int playerHealth;
+        public SaveGame(String playerName, int playerScore, String levelFileName, int playerHealth){
             this.playerName = playerName;
             this.playerScore = playerScore;
             this.levelFileName = levelFileName;
+            this.playerHealth = playerHealth;
         }
     }
 }

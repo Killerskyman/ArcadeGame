@@ -1,2 +1,1 @@
-hello;3;Levels/aaaa
-Skillet;13;Levels/Lvl4
+Test;5;Levels/Lvl1.txt;2
