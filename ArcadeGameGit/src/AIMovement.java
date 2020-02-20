@@ -42,7 +42,7 @@ public class AIMovement extends Movement{
      */
     @Override
     public void moveLeft() {
-        sprite.updateX(-horzMove);
+        sprite.setX(sprite.getX() - horzMove);
     }
     
     /**
@@ -50,7 +50,7 @@ public class AIMovement extends Movement{
      */
     @Override
     public void moveRight() {
-    	sprite.updateX(horzMove);
+    	sprite.setX(sprite.getX() + horzMove);
     }
     
     /**

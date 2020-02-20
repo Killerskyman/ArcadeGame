@@ -40,12 +40,12 @@ public class UserMovement extends Movement {
     
     @Override
     public void moveLeft() {
-        sprite.updateX(-horzMovSpeed);
+        sprite.setX(sprite.getX()-horzMovSpeed);
     }
     
     @Override
     public void moveRight() {
-        sprite.updateX(+horzMovSpeed);
+        sprite.setX(sprite.getX()+horzMovSpeed);
     }
     
     @Override

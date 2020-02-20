@@ -29,10 +29,11 @@ public class Game {
 	}
 
 	//TODO: adjust init values of arraylists as program expands
+	private ArrayList<Physics> physics = new ArrayList<>(15);
 	private ArrayList<Sprite> monsters = new ArrayList<>();
 	private HashMap<Integer, ActionListener> keyActions = new HashMap<>(5);
 	private HashMap<Integer, Boolean> keyStates = new HashMap<>(5);
-	public static ArrayList<Level> levels = new ArrayList<>(10);
+	public static ArrayList<Level> levels = new ArrayList<>(3);
 	public static int currentLevel = 0;
 	public static int playerScore = 0;
 	private Hero player;
@@ -44,64 +45,59 @@ public class Game {
      * sets the game up by loading levels from files, spawning the player, binding the keys, and setting up physics relations
      */
 	public Game(JFrame frame){
-        this(frame, levels.get(0).filename, 0);
-	}
-	
-	public Game(JFrame frame, String levelFileName, int playerScore){
         frame.getContentPane().removeAll();
-        Game.playerScore = playerScore;
-        this.frame = frame;
-        player = new Hero(0.5, 50, 50);
-        Physics2.addToCollision(player);
-        Physics2.addToCollision(new LevelPlatform(-20,0,20,1100));
-        Physics2.addToCollision(new LevelPlatform(1920, 0, 20, 1100));
-        Physics2.addToCollision(new LevelPlatform(-20,-20, 1960, 20));
-        Physics2.addToCollision(new LevelPlatform(-20, 1080-10, 1960, 40));
-        switchLevel(null, levels.get(findLevelIndex(levels, levelFileName)), player);
+	    this.frame = frame;
+	    player = new Hero(0.5, 50, 50);
+        physics.add(player);
+        physics.add(new LevelPlatform(-20,0,20,1100));
+        physics.add(new LevelPlatform(1920, 0, 20, 1100));
+        physics.add(new LevelPlatform(-20,-20, 1960, 20));
+        physics.add(new LevelPlatform(-20, 1080-10, 1960, 40));
+	    switchLevel(null, levels.get(0), player);
         
-        gamecomp = new GameComponent();
+        gamecomp = new GameComponent(physics);
         ComponentInputMap inputMap = new ComponentInputMap(gamecomp);
-        ActionMap actMap = new ActionMap();
-        makeBinding(KeyEvent.VK_LEFT, player.getAction(UserMovement.ActionListIndex.LEFT.getIndex()), inputMap, actMap);
-        makeBinding(KeyEvent.VK_RIGHT, player.getAction(UserMovement.ActionListIndex.RIGHT.getIndex()), inputMap, actMap);
-        makeBinding(KeyEvent.VK_UP, player.getAction(UserMovement.ActionListIndex.UP.getIndex()), inputMap, actMap);
+	    ActionMap actMap = new ActionMap();
+	    makeBinding(KeyEvent.VK_LEFT, player.getAction(UserMovement.ActionListIndex.LEFT.getIndex()), inputMap, actMap);
+	    makeBinding(KeyEvent.VK_RIGHT, player.getAction(UserMovement.ActionListIndex.RIGHT.getIndex()), inputMap, actMap);
+	    makeBinding(KeyEvent.VK_UP, player.getAction(UserMovement.ActionListIndex.UP.getIndex()), inputMap, actMap);
         gamecomp.setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW, inputMap);
         gamecomp.setActionMap(actMap);
         
-        gamecomp.addKeyListener(new KeyListener() {
+	    gamecomp.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
             
             }
-            
+        
             @Override
             public void keyPressed(KeyEvent e) {
                 if(e.getKeyCode() == KeyEvent.VK_U) moveUpLevel(player);
             }
-            
+        
             @Override
             public void keyReleased(KeyEvent e) {
             
             }
         });
-        gamecomp.addKeyListener(new KeyListener() {
+	    gamecomp.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
             
             }
-            
+        
             @Override
             public void keyPressed(KeyEvent e) {
                 if(e.getKeyCode() == KeyEvent.VK_D) moveDownLevel(player);
             }
-            
+        
             @Override
             public void keyReleased(KeyEvent e) {
             
             }
         });
-        gamecomp.setFocusable(true);
-        
+	    gamecomp.setFocusable(true);
+	    
         gameScore = new JLabel("Player Score: ");
         
         frame.add(gamecomp, BorderLayout.CENTER);
@@ -112,13 +108,10 @@ public class Game {
         if(timer == null) {
             timer = new Timer(20, new GameTickList(gamecomp));
             timer.addActionListener(new updateBinds());
-            timer.addActionListener(e -> {
-                gameScore.setText(gameScore.getText().split(":")[0] + ":  " + playerScore);
-                gameScore.repaint();
-            });
+            timer.addActionListener(e -> gameScore.setText(gameScore.getText().split(":")[0] + ":  " + playerScore));
         }
         timer.start();
-    }
+	}
     
     /**
      * loads the levels into the levels arrayList from the ArrayList of Strings
@@ -137,15 +130,6 @@ public class Game {
         }
     }
     
-    public static int findLevelIndex(ArrayList<Level> levels, String filename){
-        for(Level level : levels){
-            if(level.filename.equals(filename)){
-                return levels.indexOf(level);
-            }
-        }
-        return -1;
-    }
-    
     /**
      * switches between the remove level and the add level
      * @param remove level to remove from the screen
@@ -154,12 +138,12 @@ public class Game {
      */
     public void switchLevel(Level remove, Level add, Hero player){
         if(remove != null) {
-            remove.removePlatsFromPhysics();
+            remove.removePlatsFromPhysics(physics);
             for(Sprite monster : new ArrayList<>(monsters)){
                 destroySprite(monster);
             }
         }
-	    add.addPlatsToPhysics();
+	    add.addPlatsToPhysics(physics);
         for(Point2D spawn : add.getMonsterSpawns()){
             if(Math.random()>0.5){
                 spawnSprite(new Monster1(0.5, spawn.getX(), spawn.getY()-50, player));
@@ -200,7 +184,7 @@ public class Game {
      * @param spriteToDest
      */
     public void destroySprite(Sprite spriteToDest){
-        Physics2.removeCollision(spriteToDest);
+        physics.remove(spriteToDest);
         monsters.remove(spriteToDest);
         if(spriteToDest.spawnsSprite){
             removeTimedSpawn(spriteToDest);
@@ -213,7 +197,7 @@ public class Game {
      */
     public void spawnSprite(Sprite spriteToSpawn){
         if(spriteToSpawn == null) return;
-        Physics2.addToCollision(spriteToSpawn);
+        physics.add(spriteToSpawn);
         monsters.add(spriteToSpawn);
         if(spriteToSpawn.spawnsSprite){
             makeTimedSpawn(spriteToSpawn, spriteToSpawn.spawnTiming());
@@ -224,7 +208,7 @@ public class Game {
      * updates all objects in the physics arraylist by checking for collisions and updating their position
      */
 	public void updatePhysics(){
-	    Physics2.updatePhysics();
+	    Physics.updatePhysics(physics);
     }
     
     /**
@@ -271,17 +255,13 @@ public class Game {
      * updates any timed spawns that are in the hashmaps
      */
     private void updateTimedSpawns(){
-        ArrayList<Sprite> spritesToSpawn = new ArrayList<>();
         for(Sprite sprite : timedSpawns.keySet()){
             if(timedSpawns.get(sprite) > currentTimeSpawns.get(sprite)){
                 currentTimeSpawns.put(sprite, currentTimeSpawns.get(sprite) + 1);
             }else{
-                spritesToSpawn.add(sprite);
+                spawnSprite(sprite.spawning());
+                currentTimeSpawns.put(sprite, 0);
             }
-        }
-        for(Sprite sprite : spritesToSpawn) {
-            spawnSprite(sprite.spawning());
-            currentTimeSpawns.put(sprite, 0);
         }
     }
     
