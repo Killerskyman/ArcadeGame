@@ -50,10 +50,4 @@ public class Egg extends Sprite{
     public double getJoustHeight() {
         return Double.MAX_VALUE;
     }
-    
-    @Override
-    public Sprite death() {
-        Game.playerScore = Game.playerScore + 1;
-        return super.death();
-    }
 }

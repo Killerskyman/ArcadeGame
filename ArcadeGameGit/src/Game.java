@@ -105,21 +105,28 @@ public class Game {
 	    
         gameScore = new JLabel("Player Score: ");
         
+        JButton saveGame = new JButton("Save Game");
+        saveGame.addActionListener(e -> Menus.loadSaveMenu(frame, Game.levels.get(Game.currentLevel).filename));
         frame.add(gamecomp, BorderLayout.CENTER);
-        frame.add(gameScore, BorderLayout.NORTH);
+        JPanel north = new JPanel();
+        north.add(saveGame);
+        north.add(gameScore);
+        frame.add(north, BorderLayout.NORTH);
         frame.repaint();
         frame.setVisible(true);
         gamecomp.requestFocus();
-        if(timer == null) {
-            timer = new Timer(20, new GameTickList(gamecomp));
-            timer.addActionListener(new updateBinds());
-            timer.addActionListener(e -> {
-                gameScore.setText(gameScore.getText().split(":")[0] + ":  " + playerScore);
-                gameScore.repaint();
-            });
-        }
+        timer = new Timer(20, new GameTickList(gamecomp));
+        timer.addActionListener(new updateBinds());
+        timer.addActionListener(e -> {
+            gameScore.setText(gameScore.getText().split(":")[0] + ":  " + Game.getPlayerScore());
+            gameScore.repaint();
+        });
         timer.start();
 	}
+	
+	public static int getPlayerScore(){
+	    return playerScore;
+    }
     
     /**
      * loads the levels into the levels arrayList from the ArrayList of Strings
@@ -194,7 +201,9 @@ public class Game {
      */
     public void killSprite(Sprite spriteToKill){
         destroySprite(spriteToKill);
-        spawnSprite(spriteToKill.death());
+        Sprite spriteToSpawn = spriteToKill.death();
+        if(spriteToSpawn==null && spriteToKill.getJoustHeight()>2000) Game.playerScore++;
+        spawnSprite(spriteToSpawn);
     }
     
     /**
@@ -299,6 +308,9 @@ public class Game {
         }
         for(Sprite sprite : spritesToRem) {
             killSprite(sprite);
+        }
+        if(monsters.size()==0){
+            moveUpLevel(player);
         }
         if(player.isDead){
             timer.stop();

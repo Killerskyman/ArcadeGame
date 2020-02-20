@@ -34,11 +34,84 @@ public class Menus{
     
     public static void loadDeathMenu(JFrame frame){
         frame.getContentPane().removeAll();
+        loadLeaderBoard("leaderBoard.txt");
         JPanel menu = new JPanel();
-        JButton saveGame = new JButton("Save Game");
-        saveGame.addActionListener(e -> loadSaveMenu(frame, Game.levels.get(Game.currentLevel).filename));
-        menu.add(saveGame);
+        JTextField playerName = new JTextField(30);
+        JButton addLeader = new JButton("Add To LeaderBoard");
+        addLeader.addActionListener(e -> {
+            insertEntryToLeaderBoard(new LeaderBoard(playerName.getText(), Game.playerScore));
+            saveLeaderBoard("leaderBoard.txt");
+            loadStartMenu(frame);
+        });
+        JPanel info = new JPanel();
+        JLabel death = new JLabel("YOU DIED!");
+        JLabel score = new JLabel("Score: "+Game.getPlayerScore());
+        death.setAlignmentX(Component.CENTER_ALIGNMENT);
+        score.setAlignmentX(Component.CENTER_ALIGNMENT);
+        info.add(death);
+        info.add(score);
+        info.add(playerName);
+        menu.add(addLeader);
+        frame.add(info, BorderLayout.NORTH);
+        JPanel center = new JPanel();
+        addLeaderBoardToJpanel(center);
+        frame.add(center, BorderLayout.CENTER);
         makeSubMenu(frame, menu);
+    }
+    
+    private static void insertEntryToLeaderBoard(LeaderBoard entry){
+        for(int i = 0, size = leaderBoards.size(); i < size; i++) {
+            if(leaderBoards.get(i).playerScore < entry.playerScore){
+                leaderBoards.add(i, entry);
+                return;
+            }
+        }
+        leaderBoards.add(entry);
+    }
+    
+    private static void addLeaderBoardToJpanel(JPanel panel){
+        int saveCount = 1;
+        for(LeaderBoard game : leaderBoards){
+            JPanel row = new JPanel();
+            row.add(new JLabel(String.valueOf(saveCount)));
+            row.add(new JLabel(game.playerName));
+            row.add(new JLabel(String.valueOf(game.playerScore)));
+            row.setAlignmentX(Component.CENTER_ALIGNMENT);
+            panel.add(row);
+            saveCount++;
+        }
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    }
+    
+    private static ArrayList<LeaderBoard> leaderBoards = new ArrayList<>();
+    public static void loadLeaderBoard(String leaderBoardFile){
+        leaderBoards.clear();
+        try{
+            BufferedReader boardEntry = new BufferedReader(new FileReader(leaderBoardFile));
+            String curLine = "";
+            while((curLine = boardEntry.readLine()) != null){
+                String[] entry = curLine.split(";");
+                leaderBoards.add(new LeaderBoard(entry[0], Integer.parseInt(entry[1])));
+            }
+            boardEntry.close();
+        }catch(Exception e){
+            System.err.println("LEADERBOARD FILE NOT FOUND!");
+        }
+    }
+    
+    public static void saveLeaderBoard(String leaderBoardFile){
+        try {
+            FileWriter saves = new FileWriter(leaderBoardFile);
+            for(LeaderBoard entry : leaderBoards) {
+                saves.write(entry.playerName);
+                saves.write(";");
+                saves.write(String.valueOf(entry.playerScore));
+                saves.write("\r\n");
+            }
+            saves.close();
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
     }
     
     public static void loadSaveMenu(JFrame frame, String levelFileName){
@@ -47,7 +120,10 @@ public class Menus{
         JPanel getinfo = new JPanel();
         JTextField playerName = new JTextField(50);
         JButton saveGame = new JButton("Confirm Save Game");
-        saveGame.addActionListener(e -> addSaveToSaveGame("saveGames.txt", new SaveGame(playerName.getText(), Game.playerScore, levelFileName)));
+        saveGame.addActionListener(e -> {
+            addSaveToSaveGame("saveGames.txt", new SaveGame(playerName.getText(), Game.playerScore, levelFileName));
+            loadStartMenu(frame);
+        });
         getinfo.add(playerName);
         getinfo.add(saveGame);
         frame.add(getinfo, BorderLayout.CENTER);
@@ -150,6 +226,15 @@ public class Menus{
         }
         System.out.println(output.toString());
         return output;
+    }
+    
+    private static class LeaderBoard{
+        public String playerName;
+        public int playerScore;
+        public LeaderBoard(String playerName, int playerScore){
+            this.playerName = playerName;
+            this.playerScore = playerScore;
+        }
     }
     
     private static class SaveGame{
