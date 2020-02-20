@@ -23,7 +23,7 @@ public class Bullet extends Sprite{
      */
     public Bullet(double x, double y, double vel, Point2D.Double vector) {
     	
-        super(0, x, y, 10, 10, true);
+        super(0, x, y, 20, 20, true);
         color = Color.DARK_GRAY;
         this.vector = vector;
         this.vel = vel;
@@ -76,12 +76,14 @@ public class Bullet extends Sprite{
     
     @Override
     public Sprite spawning() {
-    	
         return null;
     }
     
     @Override
     public boolean interactsWith(Sprite otherSprite) {
+        if(!otherSprite.isFriendly){
+            isDead = true;
+        }
         return false;
     }
     

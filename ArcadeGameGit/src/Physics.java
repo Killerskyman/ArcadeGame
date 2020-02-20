@@ -158,6 +158,9 @@ public abstract class Physics{
     }
     
     public abstract void drawOn(Graphics2D g);
+    public boolean getShouldPhysic(){
+        return true;
+    }
     
     private static boolean physicsDebug = false; //for intellij debugging with conditional breakpoints
     

@@ -45,7 +45,22 @@ public class Monster1 extends Sprite {
         }
         return true;
     }
-
+    
+//    @Override
+//    public boolean physicsCollision(Physics p, boolean[] pointOtherPhysics) {
+//        boolean output = true;
+//        if(!p.isSprite()) {
+//            output = super.physicsCollision(p, pointOtherPhysics);
+//        }else{
+//            if(((Sprite) p).isFriendly){
+//                return true;
+//            }else{
+//                output = super.physicsCollision(p, pointOtherPhysics);
+//            }
+//        }
+//        return output;
+//    }
+    
     @Override
     public double getJoustHeight() {
         return this.getY();
