@@ -1,0 +1,4 @@
+skilllet;3;Levels/testLvl.txt
+Skillet;0;Levels/New Text Document.txt
+skillet;4;Levels/New Text Document.txt
+hello;9;Levels/New Text Document.txt

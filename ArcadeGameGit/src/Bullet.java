@@ -23,7 +23,7 @@ public class Bullet extends Sprite{
      */
     public Bullet(double x, double y, double vel, Point2D.Double vector) {
     	
-        super(0, x, y, 10, 10, true);
+        super(0, x, y, 20, 20, true);
         color = Color.DARK_GRAY;
         this.vector = vector;
         this.vel = vel;
@@ -35,9 +35,9 @@ public class Bullet extends Sprite{
         addMover(new Movement(this) {
             @Override
             public void updatePos() {
-                sprite.setX(sprite.getX()+xv);
-                sprite.setY(sprite.getY()+yv);
-                if(getX() < 0 || getY() < 0 || getRightX() > 1920 || getLowerY() > 1080-10){
+                sprite.updateX(xv);
+                sprite.updateY(yv);
+                if(getX() < 1 || getY() < 1 || getRightX() > 1919 || getLowerY() > 1079-10){
                     sprite.isDead = true;
                 }
             }
@@ -76,12 +76,14 @@ public class Bullet extends Sprite{
     
     @Override
     public Sprite spawning() {
-    	
         return null;
     }
     
     @Override
     public boolean interactsWith(Sprite otherSprite) {
+        if(!otherSprite.isFriendly){
+            isDead = true;
+        }
         return false;
     }
     

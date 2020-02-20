@@ -6,9 +6,8 @@ import java.util.Arrays;
 /**
  * defines what a movable object that interacts with others of itself should have
  */
-public abstract class Sprite extends Physics {
+public abstract class Sprite extends Physics2 {
 
-    private static final double PERCENTMOVEPHYSICS = 0.99; //how fast it moves from other objects colliding with it
     private Movement mover; //how it should be moved
     public boolean isDead = false; //whether it should be deleted
     public boolean spawnsSprite = false;
@@ -38,71 +37,6 @@ public abstract class Sprite extends Physics {
     public Sprite(double fallAccel, double x, double y, double w, double h, boolean isFriendly){
         super(fallAccel, x, y, w, h);
         this.isFriendly = isFriendly;
-    }
-    
-    /**
-     * coordinates how it should move when it collides with object p, autodetects interaction with another sprite object
-     * @param p physics object it collided with
-     * @param pointOtherPhysics output of Physics.doesCollideWith(p)
-     * @return whether it should fall or not
-     */
-    @Override
-    public boolean physicsCollision(Physics p, boolean[] pointOtherPhysics) {
-        boolean continuePhysics = true;
-        boolean[] noContact = {false, false, false, false};
-        if(p.isSprite() && !(Arrays.equals(pointOtherPhysics, noContact))){//check to see if the other object is a sprite and interact with it
-            continuePhysics = this.interactsWith((Sprite) p) || ((Sprite) p).interactsWith(this);
-        }
-        if(!continuePhysics) return true;
-        boolean shouldFall = true;
-        if(pointOtherPhysics[0] && pointOtherPhysics[1])setY(getY()+PERCENTMOVEPHYSICS*(p.getLowerY()-getY()));
-        else if(pointOtherPhysics[1] && pointOtherPhysics[2])setX(getX()-PERCENTMOVEPHYSICS*(getRightX()-p.getX()));
-        else if(pointOtherPhysics[2] && pointOtherPhysics[3]){
-            setY(getY()-PERCENTMOVEPHYSICS*(getLowerY()-p.getY()));
-            shouldFall = false;
-        }
-        else if(pointOtherPhysics[3] && pointOtherPhysics[0])setX(getX()+PERCENTMOVEPHYSICS*(p.getRightX()-getX()));
-        else {
-            if(pointOtherPhysics[0]) {
-                double deltaX = PERCENTMOVEPHYSICS * (p.getRightX() - this.getX());
-                double deltaY = PERCENTMOVEPHYSICS * (p.getLowerY() - this.getY());
-                if(deltaX < deltaY){
-                    this.setX(getX() + deltaX);
-                }else{
-                    this.setY(getY() + deltaY);
-                }
-            }
-            if(pointOtherPhysics[1]) {
-                double deltaX = PERCENTMOVEPHYSICS * (this.getRightX() - p.getX());
-                double deltaY = PERCENTMOVEPHYSICS * (p.getLowerY() - this.getY());
-                if(deltaX < deltaY){
-                    this.setX(getX() - deltaX);
-                }else{
-                    setY(getY() + deltaY);
-                }
-            }
-            if(pointOtherPhysics[2]) {
-                double deltaX = PERCENTMOVEPHYSICS * (this.getRightX() - p.getX());
-                double deltaY = PERCENTMOVEPHYSICS * (this.getLowerY() - p.getY());
-                if(deltaX < deltaY){
-                    this.setX(getX() - deltaX);
-                }else{
-                    setY(getY() - deltaY);
-                }
-                shouldFall = false;
-            }
-            if(pointOtherPhysics[3]) {
-                double deltaX = PERCENTMOVEPHYSICS * (p.getRightX() - this.getX());
-                double deltaY = PERCENTMOVEPHYSICS * (this.getLowerY() - p.getY());
-                if(deltaX < deltaY){
-                    this.setX(getX() + deltaX);
-                }else{
-                    setY(getY() - deltaY);
-                }
-                shouldFall = false;
-            }
-        }
-        return shouldFall;
     }
     
     @Override
@@ -143,15 +77,6 @@ public abstract class Sprite extends Physics {
             return e -> {};
         }else{
             return out;
-        }
-    }
-
-    @Override
-    public boolean interactsWith(Physics p) {
-        if(p.isSprite()){
-            return this.interactsWith((Sprite) p);
-        }else {
-            return super.interactsWith(p);
         }
     }
 

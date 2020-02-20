@@ -7,26 +7,18 @@ import java.util.ArrayList;
  */
 public class GameComponent extends JPanel {
     
-    private ArrayList<Physics> physics;
-    
     /**
      * adds objects with physics to the game component
-     * @param physics array list of physics objects
      */
-    public GameComponent(ArrayList<Physics> physics){
-    	
-        this.physics = physics;
+    public GameComponent(){
     }
     
     /**
      * adds inputs to the game component
-     * @param physics array list of physics objects
      * @param keyInput map
      * @param actMap of actions for those keys
      */
-    public GameComponent(ArrayList<Physics> physics, ComponentInputMap keyInput, ActionMap actMap){
-    	
-        this(physics);
+    public GameComponent(ComponentInputMap keyInput, ActionMap actMap){
         setInputMap(WHEN_IN_FOCUSED_WINDOW, keyInput);
         setActionMap(actMap);
     }
@@ -36,8 +28,6 @@ public class GameComponent extends JPanel {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         g2.scale(getWidth()/1920.0, getHeight()/1080.0);
-        for(Physics physic : physics){
-            physic.drawOn(g2);
-        }
+        Physics2.drawPhysics(g2);
     }
 }

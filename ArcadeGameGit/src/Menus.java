@@ -1,8 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.util.ArrayList;
 
 public class Menus{
@@ -35,24 +33,62 @@ public class Menus{
     }
     
     public static void loadDeathMenu(JFrame frame){
-        loadStartMenu(frame);
+        frame.getContentPane().removeAll();
+        JPanel menu = new JPanel();
+        JButton saveGame = new JButton("Save Game");
+        saveGame.addActionListener(e -> loadSaveMenu(frame, Game.levels.get(Game.currentLevel).filename));
+        menu.add(saveGame);
+        makeSubMenu(frame, menu);
     }
     
-    public static void loadSaveMenu(JFrame frame){
+    public static void loadSaveMenu(JFrame frame, String levelFileName){
         frame.getContentPane().removeAll();
         JPanel menu = new JPanel();
         JPanel getinfo = new JPanel();
-        JFormattedTextField playerName = new JFormattedTextField();
+        JTextField playerName = new JTextField(50);
         JButton saveGame = new JButton("Confirm Save Game");
-        
+        saveGame.addActionListener(e -> addSaveToSaveGame("saveGames.txt", new SaveGame(playerName.getText(), Game.playerScore, levelFileName)));
+        getinfo.add(playerName);
+        getinfo.add(saveGame);
+        frame.add(getinfo, BorderLayout.CENTER);
+        makeSubMenu(frame, menu);
+    }
+    
+    private static void addSaveToSaveGame(String saveFileName, SaveGame game){
+        try {
+            FileWriter saves = new FileWriter(saveFileName, true);
+            saves.write(game.playerName);
+            saves.write(";");
+            saves.write(String.valueOf(game.playerScore));
+            saves.write(";");
+            saves.write(game.levelFileName);
+            saves.write("\r\n");
+            saves.close();
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
     }
     
     private static ArrayList<SaveGame> savedGames = new ArrayList<>();
     private static void loadGameLoadMenu(JFrame frame){
+        loadSaveGames("saveGames.txt");
         frame.getContentPane().removeAll();
         JPanel center = new JPanel();
+        int saveCount = 1;
         for(SaveGame game : savedGames){
+            JPanel row = new JPanel();
+            row.add(new JLabel(String.valueOf(saveCount)));
+            row.add(new JLabel(game.playerName));
+            row.add(new JLabel(String.valueOf(game.playerScore)));
+            JButton loadGame = new JButton("Load Game");
+            loadGame.addActionListener(e -> new Game(frame, game.levelFileName, game.playerScore));
+            row.add(loadGame);
+            row.setAlignmentX(Component.CENTER_ALIGNMENT);
+            center.add(row);
+            saveCount++;
         }
+        center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
+        frame.add(center, BorderLayout.CENTER);
         JPanel menu = new JPanel();
         makeSubMenu(frame, menu);
     }
@@ -94,6 +130,7 @@ public class Menus{
                 String[] savedGame = curLine.split(";");
                 savedGames.add(new SaveGame(savedGame[0], Integer.parseInt(savedGame[1]), savedGame[2]));
             }
+            saveGame.close();
         }catch(Exception e){
             System.err.println("SAVE GAME FILE NOT FOUND!");
         }
