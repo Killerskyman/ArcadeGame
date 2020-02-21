@@ -12,9 +12,15 @@ public abstract class Movement{
     public double horzMov = 5;//how fast it moves side to side
     public double jumpVel = 10;//how high it jumps
     public Sprite sprite;
-    
+    public Sprite track;
+
     public Movement(Sprite sprite){
+        this(sprite, null);
+    }
+
+    public Movement(Sprite sprite, Sprite track){
         this.sprite = sprite;
+        this.track = track;
     }
     
     /**
@@ -47,7 +53,9 @@ public abstract class Movement{
      * returns an ArrayList ActionListeners that are attached to the subclass
      * @return ArrayList of possible actions that can be performed on the sprite as ActionListeners, may be null
      */
-    public abstract ArrayList<ActionListener> getMovers();//for using actionListeners specific to each Movement Type
+    public ArrayList<ActionListener> getMovers(){
+        return null;
+    }//for using actionListeners specific to each Movement Type
     
     public void setSprite(Sprite sprite) {
         this.sprite = sprite;
