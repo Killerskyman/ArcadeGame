@@ -61,6 +61,12 @@ public abstract class Physics{
      * @return whether the object should be falling after the collision
      */
     public abstract boolean physicsCollision(Physics p, boolean[] pointOtherPhysics);
+    
+    /**
+     * what to do when two physics objects in general collide, useful for killing one of the objects if the touch
+     * @param p object to interact with
+     * @return whether to continue physics operations on p
+     */
     public boolean interactsWith(Physics p){
         return true;
     }
@@ -72,7 +78,11 @@ public abstract class Physics{
     public boolean getFalling(){
         return isFalling;
     }
-
+    
+    /**
+     * whether this physics object is a sprite or not
+     * @return
+     */
     public abstract boolean isSprite();
     
     /**
@@ -158,8 +168,6 @@ public abstract class Physics{
     }
     
     public abstract void drawOn(Graphics2D g);
-    
-    private static boolean physicsDebug = false; //for intellij debugging with conditional breakpoints
     
     /**
      * updates the physics engine for the arraylist of the physics provided

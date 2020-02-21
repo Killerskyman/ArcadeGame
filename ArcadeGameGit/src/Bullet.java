@@ -5,15 +5,13 @@ import java.util.ArrayList;
 
 /**
  * class that is the bullet from monster2
- * WIP
  */
 public class Bullet extends Sprite{
     
+    private static final double WIDTH = 20, HEIGHT= 20;
     private double xv;
     private double yv;
-    private Point2D.Double vector;
-    private double vel;
-    
+
     /**
      * constructs a bullet class
      * @param x position of sprite
@@ -23,10 +21,8 @@ public class Bullet extends Sprite{
      */
     public Bullet(double x, double y, double vel, Point2D.Double vector) {
     	
-        super(0, x, y, 10, 10, true);
+        super(0, x, y, WIDTH, HEIGHT, true);
         color = Color.DARK_GRAY;
-        this.vector = vector;
-        this.vel = vel;
         double dx = vector.getX()-x;
         double dy = vector.getY()-y;
         double vm = Math.sqrt((dx * dx) + (dy * dy));
@@ -70,22 +66,41 @@ public class Bullet extends Sprite{
     public Bullet(double x, double y, Point2D.Double vector){
         this(x,y,15,vector);
     }
-    
+
     @Override
-    public Sprite spawning() {
-    	
-        return null;
+    public boolean physicsCollision(Physics p, boolean[] pointOtherPhysics) {
+        boolean output;
+        if(!p.isSprite()) {
+            output = super.physicsCollision(p, pointOtherPhysics);
+        }else{
+            if(((Sprite) p).isFriendly){
+                return true;
+            }else{
+                output = super.physicsCollision(p, pointOtherPhysics);
+            }
+        }
+        return output;
     }
     
     @Override
     public boolean interactsWith(Sprite otherSprite) {
-        otherSprite.interactsWith(this);
+        if(!otherSprite.isFriendly){
+            isDead = true;
+        }
         return false;
     }
     
     @Override
+    public boolean interactsWith(Physics p) {
+        if(!p.isSprite()){
+            isDead = true;
+            return false;
+        }
+        return super.interactsWith(p);
+    }
+    
+    @Override
     public double getJoustHeight() {
-    	
         return 0;
     }
     

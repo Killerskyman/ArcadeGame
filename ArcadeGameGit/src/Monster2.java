@@ -4,20 +4,7 @@ import java.awt.geom.Point2D;
 /**
  * monster 2 is a monster that shoots projectiles at you
  */
-public class Monster2 extends Sprite {
-    
-    /**
-     * makes a new monster with fall acceleration and starting position x,y
-     * @param fallAccel
-     * @param x
-     * @param y
-     */
-    public Monster2(double fallAccel, double x, double y) {
-        super(fallAccel, x, y, true);
-        color = Color.RED;
-        isMonster = true;
-        spawnsSprite = true;
-    }
+public class Monster2 extends Monster1 {
     
     /**
      * makes a new monster with fall acceleration and starting position x,y.
@@ -29,43 +16,20 @@ public class Monster2 extends Sprite {
      * @param player the Hero object player to track for the AI
      */
     public Monster2(double fallAccel, double x, double y, Hero player){
-        this(fallAccel, x, y);
-        isMonster = true;
+        super(fallAccel, x, y, player);
+        color = Color.RED;
         spawnsSprite = true;
-        this.addMover(new AIMovement(this, player));
     }
     
     @Override
     public Sprite spawning() {
-        double x = ((AIMovement) getMover()).player.getX();
-        double y = ((AIMovement) getMover()).player.getY();
-        Bullet bullet = new Bullet(getX(), getY(), new Point2D.Double(x,y));
-        return bullet;
+        double x = getMover().getTrackerX();
+        double y = getMover().getTrackerY();
+        return new Bullet(getX()+(getWidth()/2), getY()+(getHeight()/2), new Point2D.Double(x,y));
     }
     
     @Override
     public int spawnTiming() {
         return 50;
-    }
-    
-    @Override
-    public boolean interactsWith(Sprite p) {
-        if(p.isFriendly) return true;
-        else if(p.getJoustHeight() < getJoustHeight()){
-            isDead = true;
-            return false;
-        }
-        return true;
-    }
-    
-    @Override
-    public double getJoustHeight() {
-        return this.getY();
-    }
-    
-    @Override
-    public Sprite death() {
-        super.death();
-        return new Egg(this,0.5, getX(), getY());
     }
 }

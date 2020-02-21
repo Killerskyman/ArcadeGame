@@ -4,16 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class UserMovement extends Movement {
-    
-    /**
-     * defines how the user interacts with a sprite this object is attached to
-     */
-    private static final double horzMovSpeed = 7;//how fast it moves side to side
-    private static final double jumpVel = 20;//how high it jumps
-    private UsrMoveLeftList moverLeft = new UsrMoveLeftList();
-    private UsrMoveRightList moverRight = new UsrMoveRightList();
-    private UsrJumpList moverJump = new UsrJumpList();
-    private ArrayList<ActionListener> movers = new ArrayList<>(Arrays.asList(moverLeft, moverRight, moverJump));//combine in an arraylist to get it easier
+
+    private final UsrMoveLeftList moverLeft = new UsrMoveLeftList();
+    private final UsrMoveRightList moverRight = new UsrMoveRightList();
+    private final UsrJumpList moverJump = new UsrJumpList();
+    private final ArrayList<ActionListener> movers = new ArrayList<>(Arrays.asList(moverLeft, moverRight, moverJump));//combine in an arraylist to get it easier
 
     public enum ActionListIndex{
         LEFT(0),
@@ -32,25 +27,12 @@ public class UserMovement extends Movement {
 
     public UserMovement(Sprite sprite) {
         super(sprite);
+        horzMov = 7;
+        jumpVel = 20;
     }
     
     @Override
     public void updatePos() {
-    }
-    
-    @Override
-    public void moveLeft() {
-        sprite.setX(sprite.getX()-horzMovSpeed);
-    }
-    
-    @Override
-    public void moveRight() {
-        sprite.setX(sprite.getX()+horzMovSpeed);
-    }
-    
-    @Override
-    public void jump() {
-        sprite.setJumpVely(-jumpVel);
     }
 
     @Override

@@ -5,8 +5,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Point2D;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -15,40 +18,71 @@ import java.util.HashMap;
  * @author Skyler Cleland and Daniel Vega
  *
  */
-public class Main {
+public class Game {
+    
+    private static final int INITSCREENSIZEWIDTH = 1920, INITSCREENSIZEHEIGHT = 1080;
+    private static final int PLAYERHEALTH = 3;
+    private static final double GRAVITY = 0.5;
+    private static final double PLAYERSIZE = 50;
+    private static final int GAMETICKSPEED = 20;
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		new Main();
-	}
-
+    private Menus menu;
 	//TODO: adjust init values of arraylists as program expands
 	private ArrayList<Physics> physics = new ArrayList<>(15);
 	private ArrayList<Sprite> monsters = new ArrayList<>();
 	private HashMap<Integer, ActionListener> keyActions = new HashMap<>(5);
 	private HashMap<Integer, Boolean> keyStates = new HashMap<>(5);
-	private ArrayList<Level> levels = new ArrayList<>(3);
+	public static ArrayList<Level> levels = new ArrayList<>(10);
+	public int currentLevel;
+	public int playerScore;
+	private Hero player;
+    private JFrame frame;
+    private JLabel gameScore;
+    private Timer timer;
     
     /**
      * sets the game up by loading levels from files, spawning the player, binding the keys, and setting up physics relations
+     * @param frame the JFrame to display in
      */
-	public Main(){
-	    Hero player = new Hero(0.5, 50, 50);
-        physics.add(player);
-	    loadLevels(levels, new ArrayList<>(Arrays.asList("testLvl.txt", "New Text Document.txt")));
-	    switchLevel(null, levels.get(0), player);
+	public Game(JFrame frame, Menus menu, String firstLevelFileName){
+        this(frame, menu, firstLevelFileName, 0, PLAYERHEALTH);
+	}
 
-		GameComponent gamecomp = new GameComponent(physics);
-	    ComponentInputMap inputMap = new ComponentInputMap(gamecomp);
+	public Game(JFrame frame, Menus menu, SaveGame game){
+	    this(frame, menu, game.levelFileName, game.playerScore, game.playerHealth);
+    }
+    
+    /**
+     * sets the game up with some initial values
+     * @param frame the JFrame to display in
+     * @param levelFileName the filename of the initial level to start in
+     * @param playerScore initial player score
+     * @param playerHealth initial player health
+     */
+	public Game(JFrame frame, Menus menu, String levelFileName, int playerScore, int playerHealth){
+        frame.getContentPane().removeAll();
+        this.playerScore = playerScore;
+	    this.frame = frame;
+	    this.menu = menu;
+	    player = new Hero(GRAVITY, PLAYERSIZE, PLAYERSIZE);
+	    player.health = playerHealth;
+        physics.add(player);
+        physics.add(new LevelPlatform(-20,0,20,INITSCREENSIZEHEIGHT+40));
+        physics.add(new LevelPlatform(INITSCREENSIZEWIDTH, 0, 20, INITSCREENSIZEHEIGHT+40));
+        physics.add(new LevelPlatform(-20,-20, INITSCREENSIZEWIDTH+40, 20));
+        physics.add(new LevelPlatform(-20, INITSCREENSIZEHEIGHT-10, INITSCREENSIZEWIDTH+40, 40));
+        currentLevel = findLevelIndex(levels, levelFileName);
+	    switchLevel(null, levels.get(currentLevel), player);
+
+        GameComponent gamecomp = new GameComponent(physics);
+        ComponentInputMap inputMap = new ComponentInputMap(gamecomp);
 	    ActionMap actMap = new ActionMap();
 	    makeBinding(KeyEvent.VK_LEFT, player.getAction(UserMovement.ActionListIndex.LEFT.getIndex()), inputMap, actMap);
 	    makeBinding(KeyEvent.VK_RIGHT, player.getAction(UserMovement.ActionListIndex.RIGHT.getIndex()), inputMap, actMap);
 	    makeBinding(KeyEvent.VK_UP, player.getAction(UserMovement.ActionListIndex.UP.getIndex()), inputMap, actMap);
         gamecomp.setInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW, inputMap);
         gamecomp.setActionMap(actMap);
-
+        
 	    gamecomp.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -57,7 +91,7 @@ public class Main {
         
             @Override
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_U) switchLevel(levels.get(0), levels.get(1), player);
+                if(e.getKeyCode() == KeyEvent.VK_U) moveUpLevel(player);
             }
         
             @Override
@@ -73,7 +107,7 @@ public class Main {
         
             @Override
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_D) switchLevel(levels.get(1), levels.get(0), player);
+                if(e.getKeyCode() == KeyEvent.VK_D) moveDownLevel(player);
             }
         
             @Override
@@ -82,31 +116,66 @@ public class Main {
             }
         });
 	    gamecomp.setFocusable(true);
-
-        JFrame frame = new JFrame();
-        frame.setSize(1200, 1200);
-        frame.setTitle("Milestone 1 Test");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    
+        gameScore = new JLabel("Player Score: ");
+        
+        JButton saveGame = new JButton("Save Game");
+        saveGame.addActionListener(e -> {
+            timer.stop();
+            menu.loadSaveMenu(frame, Game.levels.get(this.currentLevel).filename, player.getHealth());
+        });
         frame.add(gamecomp, BorderLayout.CENTER);
-        Timer timer = new Timer(20, new GameTickList(gamecomp));
-        timer.addActionListener(new updateBinds());
-        timer.start();
+        JPanel north = new JPanel();
+        north.add(saveGame);
+        north.add(gameScore);
+        frame.add(north, BorderLayout.NORTH);
+        frame.repaint();
         frame.setVisible(true);
+        gamecomp.requestFocus();
+        timer = new Timer(GAMETICKSPEED, new GameTickList(gamecomp));
+        timer.addActionListener(new updateBinds());
+        timer.addActionListener(e -> {
+            gameScore.setText(gameScore.getText().split(":")[0] + ":  " + getPlayerScore());
+            gameScore.repaint();
+        });
+        timer.start();
 	}
+	
+	public int getPlayerScore(){
+	    return playerScore;
+    }
     
     /**
      * loads the levels into the levels arrayList from the ArrayList of Strings
      * @param levels arraylist to add the levels to
      * @param strings arraylist contain all the filenames of the level txt files
      */
-    private void loadLevels(ArrayList<Level> levels, ArrayList<String> strings) {
+    public static void loadLevels(ArrayList<Level> levels, ArrayList<String> strings) {
+        levels.clear();
+        System.out.println("Levels Loaded from files: ");
         for(String filename : strings){
             try{
                 levels.add(new Level(filename));
+                System.out.println("\t"+filename);
             }catch(Exception e){
                 System.err.println("FAILED TO LOAD LEVEL FROM FILE: " + filename);
             }
         }
+    }
+    
+    /**
+     * returns the index of the level int levels list based on the filename
+     * @param levels ArrayList to search through
+     * @param filename filename to find index for
+     * @return the index of the level in the ArrayList (-1 if not found)
+     */
+    private static int findLevelIndex(ArrayList<Level> levels, String filename){
+        for(Level level : levels){
+            if(level.filename.equals(filename)){
+                return levels.indexOf(level);
+            }
+        }
+        return -1;
     }
     
     /**
@@ -132,6 +201,20 @@ public class Main {
         }
 	    add.spawnHero(player);
     }
+
+    public void moveUpLevel(Hero player){
+        if(currentLevel < levels.size()-1){
+            switchLevel(levels.get(currentLevel), levels.get(currentLevel+1), player);
+            currentLevel++;
+        }
+    }
+
+    public void moveDownLevel(Hero player){
+        if(currentLevel > 0){
+            switchLevel(levels.get(currentLevel), levels.get(currentLevel-1), player);
+            currentLevel--;
+        }
+    }
     
     /**
      * kills the sprite
@@ -139,16 +222,18 @@ public class Main {
      * removes the sprite from the necessary arraylists and spawns the new sprite upon death if needed
      * @param spriteToKill
      */
-    public void killSprite(Sprite spriteToKill){
+    private void killSprite(Sprite spriteToKill){
         destroySprite(spriteToKill);
-        spawnSprite(spriteToKill.death());
+        Sprite spriteToSpawn = spriteToKill.death();
+        if(spriteToSpawn==null && spriteToKill.getJoustHeight()>2000) playerScore++;
+        spawnSprite(spriteToSpawn);
     }
     
     /**
      * only removes the sprite from the necessary arraylists,
      * @param spriteToDest
      */
-    public void destroySprite(Sprite spriteToDest){
+    private void destroySprite(Sprite spriteToDest){
         physics.remove(spriteToDest);
         monsters.remove(spriteToDest);
         if(spriteToDest.spawnsSprite){
@@ -160,7 +245,7 @@ public class Main {
      * adds the sprite to the necessary arraylists and spawnings, may be null
      * @param spriteToSpawn
      */
-    public void spawnSprite(Sprite spriteToSpawn){
+    private void spawnSprite(Sprite spriteToSpawn){
         if(spriteToSpawn == null) return;
         physics.add(spriteToSpawn);
         monsters.add(spriteToSpawn);
@@ -172,7 +257,7 @@ public class Main {
     /**
      * updates all objects in the physics arraylist by checking for collisions and updating their position
      */
-	public void updatePhysics(){
+	private void updatePhysics(){
 	    Physics.updatePhysics(physics);
     }
     
@@ -199,8 +284,8 @@ public class Main {
     
     /**
      * creates a new timed spawn to check by adding the proper vales to the hashmaps
-     * @param sprite
-     * @param cyclesToWait
+     * @param sprite sprite that needs to spawn things
+     * @param cyclesToWait how many cycles to wait to spawn said thing
      */
     private void makeTimedSpawn(Sprite sprite, int cyclesToWait){
         timedSpawns.put(sprite, cyclesToWait);
@@ -220,18 +305,22 @@ public class Main {
      * updates any timed spawns that are in the hashmaps
      */
     private void updateTimedSpawns(){
+        ArrayList<Sprite> spritesToSpawn = new ArrayList<>();
         for(Sprite sprite : timedSpawns.keySet()){
             if(timedSpawns.get(sprite) > currentTimeSpawns.get(sprite)){
                 currentTimeSpawns.put(sprite, currentTimeSpawns.get(sprite) + 1);
             }else{
-                spawnSprite(sprite.spawning());
-                currentTimeSpawns.put(sprite, 0);
+                spritesToSpawn.add(sprite);
             }
+        }
+        for(Sprite sprite : spritesToSpawn) {
+            spawnSprite(sprite.spawning());
+            currentTimeSpawns.put(sprite, 0);
         }
     }
     
     /**
-     * removes any monsters that are marked with isDead and marks if the hero has died
+     * removes any monsters that are marked with isDead and marks if the hero has died and takes appropriate action
      */
     private void updateDead(){
         ArrayList<Sprite> spritesToRem = new ArrayList<>();
@@ -243,11 +332,80 @@ public class Main {
         for(Sprite sprite : spritesToRem) {
             killSprite(sprite);
         }
-        if(((Sprite)physics.get(0)).isDead){
-            System.out.println("i died");
+        if(monsters.size()==0){
+            moveUpLevel(player);
+        }
+        if(player.isDead){
+            timer.stop();
+            player.health = player.health - 1;
+            if(player.health <= 0){
+                menu.loadDeathMenu(frame);
+            }else {
+                switchLevel(levels.get(currentLevel), levels.get(currentLevel), player);
+                player.isDead = false;
+                timer.start();
+            }
         }
     }
-    
+
+    /**
+     * used to store info for saving/loading a game
+     */
+    public static class SaveGame{
+        public String playerName;
+        public int playerScore;
+        public String levelFileName;
+        public int playerHealth;
+        public SaveGame(String playerName, int playerScore, String levelFileName, int playerHealth){
+            this.playerName = playerName;
+            this.playerScore = playerScore;
+            this.levelFileName = levelFileName;
+            this.playerHealth = playerHealth;
+        }
+
+        /**
+         * loads all the saveGames into the ArrayList from the specified file (clears before loading)
+         * @param savedGames arrayList to load saveGames into
+         * @param saveGamesFile file to load from
+         */
+        static void loadSaveGames(ArrayList<SaveGame> savedGames, String saveGamesFile){
+            savedGames.clear();
+            try{
+                BufferedReader saveGame = new BufferedReader(new FileReader(saveGamesFile));
+                String curLine;
+                while((curLine = saveGame.readLine()) != null){
+                    String[] savedGame = curLine.split(";");
+                    savedGames.add(new SaveGame(savedGame[0], Integer.parseInt(savedGame[1]), savedGame[2], Integer.parseInt(savedGame[3])));
+                }
+                saveGame.close();
+            }catch(Exception e){
+                System.err.println("SAVE GAME FILE NOT FOUND!");
+            }
+        }
+
+        /**
+         * saves the saveGame to the specified file
+         * @param saveFileName file to save to
+         * @param game the SaveGame to pull information from
+         */
+        static void addSaveToSaveGame(String saveFileName, SaveGame game){
+            try {
+                FileWriter saves = new FileWriter(saveFileName, true);
+                saves.write(game.playerName);
+                saves.write(";");
+                saves.write(String.valueOf(game.playerScore));
+                saves.write(";");
+                saves.write(game.levelFileName);
+                saves.write(";");
+                saves.write(String.valueOf(game.playerHealth));
+                saves.write("\r\n");
+                saves.close();
+            }catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * ActionListener to update all the keybinds made from makeBinding
      */

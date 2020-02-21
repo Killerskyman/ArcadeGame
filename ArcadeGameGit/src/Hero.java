@@ -5,6 +5,8 @@ import java.awt.*;
  */
 public class Hero extends Sprite{
     
+    public int health = 3;
+    
     /**
      * make a new Hero object that defaults to the UserMovement as input (arrow keys for control)
      * @param fallAccel falling acceleration for the hero
@@ -22,18 +24,7 @@ public class Hero extends Sprite{
         return null;
     }
     
-    @Override
-    public boolean interactsWith(Sprite otherSprite) {
-    	
-        if(otherSprite.getJoustHeight() < this.getJoustHeight()){
-            isDead = true;
-            return false;
-        }
-        return true;
-    }
-    
-    @Override
-    public double getJoustHeight() {
-        return this.getY();
+    public int getHealth(){
+        return health;
     }
 }

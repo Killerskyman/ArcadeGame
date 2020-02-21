@@ -1,5 +1,3 @@
-import javax.swing.*;
-import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -9,9 +7,9 @@ import java.util.ArrayList;
 /**
  * holds all the relevant information to a level and automagically loads it from a filename
  */
-public class Level extends JComponent {
+public class Level{
     
-    private String filename;
+    public String filename;
     private BufferedImage background;
     private ArrayList<LevelPlatform> platforms = new ArrayList<>();
     private ArrayList<Point2D> monsterSpawns = new ArrayList<>();
@@ -25,7 +23,7 @@ public class Level extends JComponent {
      * @throws Exception throws multiple exceptions
      */
     public Level(String filename) throws Exception{
-        
+        this.filename = filename;
         BufferedReader sc = new BufferedReader(new FileReader(filename));
         heroSpawn = sc.readLine();
         String[] heroArgs = heroSpawn.split(";");
@@ -60,9 +58,7 @@ public class Level extends JComponent {
      * @param physics array to remove from
      */
     public void removePlatsFromPhysics(ArrayList<Physics> physics){
-        for(Physics plat : platforms){
-            physics.remove(plat);
-        }
+        physics.removeAll(platforms);
     }
     
     public ArrayList<Point2D> getMonsterSpawns(){
@@ -76,14 +72,18 @@ public class Level extends JComponent {
     public void spawnHero(Hero player) {
     	player.setX(heroSpawnX);
     	player.setY(heroSpawnY);
-    	player.setFalling(false);
     	player.updatePos(0);
     }
     
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-        
+    public String toString() {
+        return "Level{" +
+                       "filename='" + filename + '\'' +
+                       ", platforms=" + platforms +
+                       ", monsterSpawns=" + monsterSpawns +
+                       ", heroSpawn='" + heroSpawn + '\'' +
+                       ", heroSpawnX=" + heroSpawnX +
+                       ", heroSpawnY=" + heroSpawnY +
+                       '}';
     }
 }

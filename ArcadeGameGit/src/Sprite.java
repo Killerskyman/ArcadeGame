@@ -51,19 +51,21 @@ public abstract class Sprite extends Physics {
         boolean continuePhysics = true;
         boolean[] noContact = {false, false, false, false};
         if(p.isSprite() && !(Arrays.equals(pointOtherPhysics, noContact))){//check to see if the other object is a sprite and interact with it
-            continuePhysics = this.interactsWith((Sprite) p);
+            continuePhysics = this.interactsWith((Sprite) p) || ((Sprite) p).interactsWith(this);
+        }else if(!Arrays.equals(pointOtherPhysics, noContact)){
+            continuePhysics = this.interactsWith(p);
         }
         if(!continuePhysics) return true;
         boolean shouldFall = true;
         if(pointOtherPhysics[0] && pointOtherPhysics[1])setY(getY()+PERCENTMOVEPHYSICS*(p.getLowerY()-getY()));
-        else if(pointOtherPhysics[1] && pointOtherPhysics[2])setX(getX()-PERCENTMOVEPHYSICS*(getRightX()-p.getX()));
-        else if(pointOtherPhysics[2] && pointOtherPhysics[3]){
+        if(pointOtherPhysics[1] && pointOtherPhysics[2])setX(getX()-PERCENTMOVEPHYSICS*(getRightX()-p.getX()));
+        if(pointOtherPhysics[2] && pointOtherPhysics[3]){
             setY(getY()-PERCENTMOVEPHYSICS*(getLowerY()-p.getY()));
             shouldFall = false;
         }
-        else if(pointOtherPhysics[3] && pointOtherPhysics[0])setX(getX()+PERCENTMOVEPHYSICS*(p.getRightX()-getX()));
-        else {
-            if(pointOtherPhysics[0]) {
+        if(pointOtherPhysics[3] && pointOtherPhysics[0])setX(getX()+PERCENTMOVEPHYSICS*(p.getRightX()-getX()));
+        {
+            if(pointOtherPhysics[0]&&!(pointOtherPhysics[1]||pointOtherPhysics[2]||pointOtherPhysics[3])) {
                 double deltaX = PERCENTMOVEPHYSICS * (p.getRightX() - this.getX());
                 double deltaY = PERCENTMOVEPHYSICS * (p.getLowerY() - this.getY());
                 if(deltaX < deltaY){
@@ -72,7 +74,7 @@ public abstract class Sprite extends Physics {
                     this.setY(getY() + deltaY);
                 }
             }
-            if(pointOtherPhysics[1]) {
+            if(pointOtherPhysics[1]&&!(pointOtherPhysics[0]||pointOtherPhysics[2]||pointOtherPhysics[3])) {
                 double deltaX = PERCENTMOVEPHYSICS * (this.getRightX() - p.getX());
                 double deltaY = PERCENTMOVEPHYSICS * (p.getLowerY() - this.getY());
                 if(deltaX < deltaY){
@@ -81,25 +83,26 @@ public abstract class Sprite extends Physics {
                     setY(getY() + deltaY);
                 }
             }
-            if(pointOtherPhysics[2]) {
+            if(pointOtherPhysics[2]&&!(pointOtherPhysics[0]||pointOtherPhysics[1]||pointOtherPhysics[3])) {
                 double deltaX = PERCENTMOVEPHYSICS * (this.getRightX() - p.getX());
                 double deltaY = PERCENTMOVEPHYSICS * (this.getLowerY() - p.getY());
                 if(deltaX < deltaY){
                     this.setX(getX() - deltaX);
                 }else{
                     setY(getY() - deltaY);
+                    shouldFall = false;
                 }
-                shouldFall = false;
+                
             }
-            if(pointOtherPhysics[3]) {
+            if(pointOtherPhysics[3]&&!(pointOtherPhysics[0]||pointOtherPhysics[1]||pointOtherPhysics[2])) {
                 double deltaX = PERCENTMOVEPHYSICS * (p.getRightX() - this.getX());
                 double deltaY = PERCENTMOVEPHYSICS * (this.getLowerY() - p.getY());
                 if(deltaX < deltaY){
                     this.setX(getX() + deltaX);
                 }else{
                     setY(getY() - deltaY);
+                    shouldFall = false;
                 }
-                shouldFall = false;
             }
         }
         return shouldFall;
@@ -115,8 +118,13 @@ public abstract class Sprite extends Physics {
      * what to do when spawning a new sprite
      * @return the sprite to spawn
      */
-    public abstract Sprite spawning();
+    public Sprite spawning(){
+        return null;
+    }
     
+    /**
+     * updates this sprites Movement Object
+     */
     public void updateMovement(){
         if(mover != null) {
             mover.updatePos();
@@ -173,8 +181,21 @@ public abstract class Sprite extends Physics {
      * @param sprite sprite that this sprite interacts with
      * @return whether to continue physics on the object
      */
-    public abstract boolean interactsWith(Sprite sprite);
-    public abstract double getJoustHeight();
+    public boolean interactsWith(Sprite sprite){
+        if(sprite.getJoustHeight() < getJoustHeight()){
+            isDead = true;
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * the height at which to compare for jousting, lower numbers beat higher numbers
+     * @return
+     */
+    public double getJoustHeight(){
+        return getY();
+    }
     
     /**
      * what to do at death, only modify this objects parameters, removing the object from specific arraylists is taken care of elsewhere
