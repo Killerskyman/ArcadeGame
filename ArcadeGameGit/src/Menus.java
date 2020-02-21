@@ -8,12 +8,23 @@ import java.util.ArrayList;
  * it also handles loading in information about previous games from files
  */
 public class Menus{
+
+    private static final int INITSCREENSIZEWIDTH = 1920, INITSCREENSIZEHEIGHT = 1080;
+    private Game gameMain;
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("The Game");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(INITSCREENSIZEWIDTH/2, INITSCREENSIZEHEIGHT/2);
+        Menus menu = new Menus();
+        menu.loadStartMenu(frame);
+    }
     
     /**
      * sets up the start menu overtop anything else the given frame
      * @param frame frame to display to
      */
-    public static void loadStartMenu(JFrame frame){
+    public void loadStartMenu(JFrame frame){
         frame.getContentPane().removeAll();
         JPanel menu = new JPanel();
         JButton newGame = new JButton("Start New Game");
@@ -26,16 +37,9 @@ public class Menus{
         menu.setMaximumSize(menu.getPreferredSize());
         frame.add(menu, BorderLayout.SOUTH);
         Game.loadLevels(Game.levels, getAllLevelFileNames("Levels"));
-        newGame.addActionListener(e -> {
-            Game.playerScore = 0;
-            new Game(frame);
-        });
-        loadGame.addActionListener(e -> {
-            loadGameLoadMenu(frame);
-        });
-        viewControls.addActionListener(e -> {
-            loadViewControls(frame);
-        });
+        newGame.addActionListener(e -> gameMain = new Game(frame, this, Game.levels.get(0).filename));
+        loadGame.addActionListener(e -> loadGameLoadMenu(frame));
+        viewControls.addActionListener(e -> loadViewControls(frame));
         frame.repaint();
         frame.setVisible(true);
     }
@@ -44,20 +48,20 @@ public class Menus{
      * sets up the death menu
      * @param frame frame to display to
      */
-    public static void loadDeathMenu(JFrame frame){
+    public void loadDeathMenu(JFrame frame){
         frame.getContentPane().removeAll();
         loadLeaderBoard("leaderBoard.txt");
         JPanel menu = new JPanel();
         JTextField playerName = new JTextField(30);
         JButton addLeader = new JButton("Add To LeaderBoard");
         addLeader.addActionListener(e -> {
-            insertEntryToLeaderBoard(new LeaderBoard(playerName.getText(), Game.playerScore));
+            LeaderBoard.insertEntryToLeaderBoard(leaderBoards, new LeaderBoard(playerName.getText(), gameMain.getPlayerScore()));
             saveLeaderBoard("leaderBoard.txt");
             loadStartMenu(frame);
         });
         JPanel info = new JPanel();
         JLabel death = new JLabel("YOU DIED!");
-        JLabel score = new JLabel("Score: "+Game.getPlayerScore());
+        JLabel score = new JLabel("Score: "+ gameMain.getPlayerScore());
         death.setAlignmentX(Component.CENTER_ALIGNMENT);
         score.setAlignmentX(Component.CENTER_ALIGNMENT);
         info.add(death);
@@ -66,54 +70,22 @@ public class Menus{
         menu.add(addLeader);
         frame.add(info, BorderLayout.NORTH);
         JPanel center = new JPanel();
-        addLeaderBoardToJpanel(center);
+        LeaderBoard.addLeaderBoardToJpanel(leaderBoards, center);
         frame.add(center, BorderLayout.CENTER);
         makeSubMenu(frame, menu);
     }
-    
-    /**
-     * inserts the given entry into the leaderBoard ArrayList in a sorted manner
-     * @param entry the LeaderBoard to add
-     */
-    private static void insertEntryToLeaderBoard(LeaderBoard entry){
-        for(int i = 0, size = leaderBoards.size(); i < size; i++) {
-            if(leaderBoards.get(i).playerScore < entry.playerScore){
-                leaderBoards.add(i, entry);
-                return;
-            }
-        }
-        leaderBoards.add(entry);
-    }
-    
-    /**
-     * adds the leaderBoard and all its info to the JPanel
-     * @param panel panel to add info to
-     */
-    private static void addLeaderBoardToJpanel(JPanel panel){
-        int saveCount = 1;
-        for(LeaderBoard game : leaderBoards){
-            JPanel row = new JPanel();
-            row.add(new JLabel(String.valueOf(saveCount)));
-            row.add(new JLabel(game.playerName));
-            row.add(new JLabel(String.valueOf(game.playerScore)));
-            row.setAlignmentX(Component.CENTER_ALIGNMENT);
-            panel.add(row);
-            saveCount++;
-        }
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-    }
-    
-    private static ArrayList<LeaderBoard> leaderBoards = new ArrayList<>();
+
+    private ArrayList<LeaderBoard> leaderBoards = new ArrayList<>();
     
     /**
      * loads the information from the specified file into the leaderBoard ArrayList
      * @param leaderBoardFile file to load from
      */
-    public static void loadLeaderBoard(String leaderBoardFile){
+    public void loadLeaderBoard(String leaderBoardFile){
         leaderBoards.clear();
         try{
             BufferedReader boardEntry = new BufferedReader(new FileReader(leaderBoardFile));
-            String curLine = "";
+            String curLine;
             while((curLine = boardEntry.readLine()) != null){
                 String[] entry = curLine.split(";");
                 leaderBoards.add(new LeaderBoard(entry[0], Integer.parseInt(entry[1])));
@@ -126,9 +98,9 @@ public class Menus{
     
     /**
      * saves all information in the leaderBoard ArrayList to the specified file
-     * @param leaderBoardFile
+     * @param leaderBoardFile file to load leader Board info from
      */
-    public static void saveLeaderBoard(String leaderBoardFile){
+    public void saveLeaderBoard(String leaderBoardFile){
         try {
             FileWriter saves = new FileWriter(leaderBoardFile);
             for(LeaderBoard entry : leaderBoards) {
@@ -149,14 +121,14 @@ public class Menus{
      * @param levelFileName current level based on the filename
      * @param playerHealth current player health
      */
-    public static void loadSaveMenu(JFrame frame, String levelFileName, int playerHealth){
+    public void loadSaveMenu(JFrame frame, String levelFileName, int playerHealth){
         frame.getContentPane().removeAll();
         JPanel menu = new JPanel();
         JPanel getinfo = new JPanel();
         JTextField playerName = new JTextField(50);
         JButton saveGame = new JButton("Confirm Save Game");
         saveGame.addActionListener(e -> {
-            addSaveToSaveGame("saveGames.txt", new SaveGame(playerName.getText(), Game.playerScore, levelFileName, playerHealth));
+            Game.SaveGame.addSaveToSaveGame("saveGames.txt", new Game.SaveGame(playerName.getText(), gameMain.getPlayerScore(), levelFileName, playerHealth));
             loadStartMenu(frame);
         });
         getinfo.add(playerName);
@@ -164,47 +136,25 @@ public class Menus{
         frame.add(getinfo, BorderLayout.CENTER);
         makeSubMenu(frame, menu);
     }
-    
-    /**
-     * saves the saveGame to the specified file
-     * @param saveFileName file to save to
-     * @param game the SaveGame to pull information from
-     */
-    private static void addSaveToSaveGame(String saveFileName, SaveGame game){
-        try {
-            FileWriter saves = new FileWriter(saveFileName, true);
-            saves.write(game.playerName);
-            saves.write(";");
-            saves.write(String.valueOf(game.playerScore));
-            saves.write(";");
-            saves.write(game.levelFileName);
-            saves.write(";");
-            saves.write(String.valueOf(game.playerHealth));
-            saves.write("\r\n");
-            saves.close();
-        }catch(IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    private static ArrayList<SaveGame> savedGames = new ArrayList<>();
+
+    private ArrayList<Game.SaveGame> savedGames = new ArrayList<>();
     
     /**
      * load the menu that is used for loading a game
      * @param frame frame to display to
      */
-    private static void loadGameLoadMenu(JFrame frame){
-        loadSaveGames("saveGames.txt");
+    private void loadGameLoadMenu(JFrame frame){
+        Game.SaveGame.loadSaveGames(savedGames, "saveGames.txt");
         frame.getContentPane().removeAll();
         JPanel center = new JPanel();
         int saveCount = 1;
-        for(SaveGame game : savedGames){
+        for(Game.SaveGame game : savedGames){
             JPanel row = new JPanel();
             row.add(new JLabel(String.valueOf(saveCount)));
             row.add(new JLabel(game.playerName));
             row.add(new JLabel(String.valueOf(game.playerScore)));
             JButton loadGame = new JButton("Load Game");
-            loadGame.addActionListener(e -> new Game(frame, game.levelFileName, game.playerScore, game.playerHealth));
+            loadGame.addActionListener(e -> this.gameMain = new Game(frame, this, game));
             row.add(loadGame);
             row.setAlignmentX(Component.CENTER_ALIGNMENT);
             center.add(row);
@@ -215,12 +165,12 @@ public class Menus{
         JPanel menu = new JPanel();
         makeSubMenu(frame, menu);
     }
-    
+
     /**
      * loads the menu where you can see what buttons do
      * @param frame frame to display to
      */
-    private static void loadViewControls(JFrame frame){
+    private void loadViewControls(JFrame frame){
         frame.getContentPane().removeAll();
         JPanel menu = new JPanel();
         JPanel info = new JPanel();
@@ -240,38 +190,17 @@ public class Menus{
      * @param frame frame to display to
      * @param menu panel to organize items into a menu
      */
-    private static void makeSubMenu(JFrame frame, JPanel menu) {
+    private void makeSubMenu(JFrame frame, JPanel menu) {
         JButton mainMenu = new JButton("Main Menu");
         menu.add(mainMenu);
-        mainMenu.addActionListener(e -> {
-            loadStartMenu(frame);
-        });
+        mainMenu.addActionListener(e -> loadStartMenu(frame));
         menu.setMaximumSize(menu.getPreferredSize());
         menu.setLayout(new BoxLayout(menu, BoxLayout.Y_AXIS));
         frame.add(menu, BorderLayout.SOUTH);
         frame.repaint();
         frame.setVisible(true);
     }
-    
-    /**
-     * loads all the saveGames into the ArrayList from the specified file (clears before loading)
-     * @param saveGamesFile file to load from
-     */
-    private static void loadSaveGames(String saveGamesFile){
-        savedGames.clear();
-        try{
-            BufferedReader saveGame = new BufferedReader(new FileReader(saveGamesFile));
-            String curLine = "";
-            while((curLine = saveGame.readLine()) != null){
-                String[] savedGame = curLine.split(";");
-                savedGames.add(new SaveGame(savedGame[0], Integer.parseInt(savedGame[1]), savedGame[2], Integer.parseInt(savedGame[3])));
-            }
-            saveGame.close();
-        }catch(Exception e){
-            System.err.println("SAVE GAME FILE NOT FOUND!");
-        }
-    }
-    
+
     /**
      * returns all the filenames in the specified folder
      *
@@ -279,7 +208,7 @@ public class Menus{
      * @param folderLocation folder location
      * @return ArrayList of filenames
      */
-    private static ArrayList<String> getAllLevelFileNames(String folderLocation){
+    private ArrayList<String> getAllLevelFileNames(String folderLocation){
         ArrayList<String> output = new ArrayList<>();
         try{
             File foldLoc = new File(folderLocation);
@@ -305,21 +234,40 @@ public class Menus{
             this.playerName = playerName;
             this.playerScore = playerScore;
         }
-    }
-    
-    /**
-     * used to store info for saving/loading a game
-     */
-    private static class SaveGame{
-        public String playerName;
-        public int playerScore;
-        public String levelFileName;
-        public int playerHealth;
-        public SaveGame(String playerName, int playerScore, String levelFileName, int playerHealth){
-            this.playerName = playerName;
-            this.playerScore = playerScore;
-            this.levelFileName = levelFileName;
-            this.playerHealth = playerHealth;
+
+        /**
+         * adds the leaderBoard and all its info to the JPanel
+         * @param leaderBoards all leaderBoard entrys to add to the JPanel
+         * @param panel panel to add info to
+         */
+        private static void addLeaderBoardToJpanel(ArrayList<LeaderBoard> leaderBoards, JPanel panel){
+            int saveCount = 1;
+            for(LeaderBoard game : leaderBoards){
+                JPanel row = new JPanel();
+                row.add(new JLabel(String.valueOf(saveCount)));
+                row.add(new JLabel(game.playerName));
+                row.add(new JLabel(String.valueOf(game.playerScore)));
+                row.setAlignmentX(Component.CENTER_ALIGNMENT);
+                panel.add(row);
+                saveCount++;
+            }
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        }
+
+        /**
+         * inserts the given entry into the leaderBoard ArrayList in a sorted manner
+         * @param leaderBoards ArrayList to add entry to
+         * @param entry the LeaderBoard to add
+         */
+        private static void insertEntryToLeaderBoard(ArrayList<LeaderBoard> leaderBoards, LeaderBoard entry){
+            for(int i = 0, size = leaderBoards.size(); i < size; i++) {
+                if(leaderBoards.get(i).playerScore < entry.playerScore){
+                    leaderBoards.add(i, entry);
+                    return;
+                }
+            }
+            leaderBoards.add(entry);
         }
     }
+
 }

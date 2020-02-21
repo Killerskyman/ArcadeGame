@@ -10,10 +10,10 @@ public class UserMovement extends Movement {
      */
     private static final double horzMovSpeed = 7;//how fast it moves side to side
     private static final double jumpVel = 20;//how high it jumps
-    private UsrMoveLeftList moverLeft = new UsrMoveLeftList();
-    private UsrMoveRightList moverRight = new UsrMoveRightList();
-    private UsrJumpList moverJump = new UsrJumpList();
-    private ArrayList<ActionListener> movers = new ArrayList<>(Arrays.asList(moverLeft, moverRight, moverJump));//combine in an arraylist to get it easier
+    private final UsrMoveLeftList moverLeft = new UsrMoveLeftList();
+    private final UsrMoveRightList moverRight = new UsrMoveRightList();
+    private final UsrJumpList moverJump = new UsrJumpList();
+    private final ArrayList<ActionListener> movers = new ArrayList<>(Arrays.asList(moverLeft, moverRight, moverJump));//combine in an arraylist to get it easier
 
     public enum ActionListIndex{
         LEFT(0),
