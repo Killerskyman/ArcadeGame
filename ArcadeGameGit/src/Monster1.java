@@ -17,16 +17,15 @@ public class Monster1 extends Sprite {
     public Monster1(double fallAccel, double x, double y, Hero player){
         super(fallAccel, x, y, true);
         color = Color.ORANGE;
-        isMonster = true;
         this.addMover(new AIMovement(this, player));
     }
-    
+
     @Override
-    public boolean interactsWith(Sprite sprite) {
-        if(sprite.isFriendly) return true;
-        return super.interactsWith(sprite);
+    public boolean jousts(Physics p) {
+        if(p.isFriendly) return true;
+        return super.jousts(p);
     }
-    
+
     @Override
     public Sprite death() {
         super.death();

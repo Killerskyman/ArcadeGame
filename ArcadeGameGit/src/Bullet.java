@@ -70,7 +70,7 @@ public class Bullet extends Sprite{
     @Override
     public boolean physicsCollision(Physics p, boolean[] pointOtherPhysics) {
         boolean output;
-        if(!p.isSprite()) {
+        if(!p.canJoust) {
             output = super.physicsCollision(p, pointOtherPhysics);
         }else{
             if(((Sprite) p).isFriendly){
@@ -83,22 +83,22 @@ public class Bullet extends Sprite{
     }
     
     @Override
-    public boolean interactsWith(Sprite otherSprite) {
-        if(!otherSprite.isFriendly){
-            isDead = true;
-        }
-        return false;
-    }
-    
-    @Override
     public boolean interactsWith(Physics p) {
-        if(!p.isSprite()){
+        if(!p.canJoust){
             isDead = true;
             return false;
         }
         return super.interactsWith(p);
     }
-    
+
+    @Override
+    public boolean jousts(Physics p) {
+        if(!p.isFriendly){
+            isDead = true;
+        }
+        return false;
+    }
+
     @Override
     public double getJoustHeight() {
         return 0;
