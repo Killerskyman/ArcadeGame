@@ -5,9 +5,6 @@ import java.util.ArrayList;
  * class that controls AI movement
  */
 public class AIMovement extends Movement{
-    
-    private static final double horzMove = 5;
-    private static final double jumpVel = 10;
     public Hero player;
     
     /**
@@ -16,7 +13,6 @@ public class AIMovement extends Movement{
      * @param player hero object to follow
      */
     public AIMovement(Sprite sprite, Hero player) {
-    	
         super(sprite);
         this.player = player;
     }
@@ -31,21 +27,6 @@ public class AIMovement extends Movement{
         }else{
             moveLeft();
         }
-    }
-    
-    @Override
-    public void moveLeft() {
-        sprite.setX(sprite.getX() - horzMove);
-    }
-    
-    @Override
-    public void moveRight() {
-    	sprite.setX(sprite.getX() + horzMove);
-    }
-    
-    @Override
-    public void jump() {
-    	sprite.setJumpVely(-jumpVel);
     }
 
     @Override
