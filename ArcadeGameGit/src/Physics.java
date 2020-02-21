@@ -6,8 +6,7 @@ import java.util.ArrayList;
  */
 public abstract class Physics{
     public Color color;
-    public boolean isFriendly;
-    public boolean isMonster = false;
+    public boolean isFriendly; //make false if object is to be killed by monsters
     private double x;
     private double y;
     private double height = 40;
