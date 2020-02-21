@@ -23,8 +23,8 @@ public class Monster2 extends Monster1 {
     
     @Override
     public Sprite spawning() {
-        double x = getMover().track.getX();
-        double y = getMover().track.getY();
+        double x = getMover().getTrackerX();
+        double y = getMover().getTrackerY();
         return new Bullet(getX()+(getWidth()/2), getY()+(getHeight()/2), new Point2D.Double(x,y));
     }
     

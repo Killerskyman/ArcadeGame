@@ -48,6 +48,14 @@ public abstract class Movement{
     public void jump() {
         sprite.setJumpVely(-jumpVel);
     }
+
+    public double getTrackerX(){
+        return track.getX();
+    }
+
+    public double getTrackerY(){
+        return track.getY();
+    }
     
     /**
      * returns an ArrayList ActionListeners that are attached to the subclass
