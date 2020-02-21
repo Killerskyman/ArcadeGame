@@ -6,6 +6,8 @@ import java.util.ArrayList;
  */
 public abstract class Physics{
     public Color color;
+    public boolean isFriendly;
+    public boolean isMonster = false;
     private double x;
     private double y;
     private double height = 40;
@@ -13,6 +15,8 @@ public abstract class Physics{
     private boolean isFalling = true;
     private double vely = 0;
     private double fallAccel;
+    public boolean canJoust = false;
+    public boolean isDead = false;//whether it should be deleted
     
     /**
      * creates a physics object, default 40 x 40
@@ -20,10 +24,11 @@ public abstract class Physics{
      * @param x starting x position
      * @param y starting y position
      */
-    public Physics(double fallAccel, double x, double y){
+    public Physics(double fallAccel, double x, double y, boolean isFriendly){
         this.x = x;
         this.y = y;
         this.fallAccel = fallAccel;
+        this.isFriendly = isFriendly;
     }
     
     /**
@@ -34,10 +39,11 @@ public abstract class Physics{
      * @param width width of the physics object
      * @param height height of the physics object
      */
-    public Physics(double fallAccel, double x, double y, double width, double height){
-        this(fallAccel, x, y);
+    public Physics(double fallAccel, double x, double y, double width, double height, boolean isFriendly){
+        this(fallAccel, x, y, isFriendly);
         this.width = width;
         this.height = height;
+        this.isFriendly = isFriendly;
     }
     
     /**
@@ -68,6 +74,17 @@ public abstract class Physics{
      * @return whether to continue physics operations on p
      */
     public boolean interactsWith(Physics p){
+        if(canJoust && p.canJoust){
+            return jousts(p);
+        }
+        return true;
+    }
+
+    public boolean jousts(Physics p){
+        if(p.getJoustHeight() < getJoustHeight()){
+            isDead = true;
+            return false;
+        }
         return true;
     }
 
@@ -78,12 +95,6 @@ public abstract class Physics{
     public boolean getFalling(){
         return isFalling;
     }
-    
-    /**
-     * whether this physics object is a sprite or not
-     * @return
-     */
-    public abstract boolean isSprite();
     
     /**
      * updates the position of the object based on isFalling and the acceleration and velocity override; mainly used with "jumping"
@@ -188,5 +199,13 @@ public abstract class Physics{
         for(Physics physic : physics){
             physic.updatePos();
         }
+    }
+
+    /**
+     * the height at which to compare for jousting, lower numbers beat higher numbers
+     * @return
+     */
+    public double getJoustHeight(){
+        return getY();
     }
 }

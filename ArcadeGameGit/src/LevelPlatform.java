@@ -14,17 +14,12 @@ public class LevelPlatform extends Physics {
      * @param h
      */
     public LevelPlatform(double x, double y, double w, double h) {
-        super(0, x, y, w, h);
+        super(0, x, y, w, h, false);
     }
     
     @Override
     public boolean physicsCollision(Physics p, boolean[] pointOtherPhysics) {
         setFalling(false); //should never move up or down
-        return false;
-    }
-
-    @Override
-    public boolean isSprite() {
         return false;
     }
 

@@ -35,13 +35,13 @@ public class Egg extends Sprite{
     public int spawnTiming() {
         return SPAWNCYCLES;
     }
-    
+
     @Override
-    public boolean interactsWith(Sprite otherSprite) {
-        if(otherSprite.isFriendly) return true;
-        return super.interactsWith(otherSprite);
+    public boolean jousts(Physics p) {
+        if(p.isFriendly) return true;
+        return super.jousts(p);
     }
-    
+
     @Override
     public double getJoustHeight() {
         return Double.MAX_VALUE;

@@ -20,13 +20,13 @@ public class Monster1 extends Sprite {
         isMonster = true;
         this.addMover(new AIMovement(this, player));
     }
-    
+
     @Override
-    public boolean interactsWith(Sprite sprite) {
-        if(sprite.isFriendly) return true;
-        return super.interactsWith(sprite);
+    public boolean jousts(Physics p) {
+        if(p.isFriendly) return true;
+        return super.jousts(p);
     }
-    
+
     @Override
     public Sprite death() {
         super.death();
