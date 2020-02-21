@@ -35,3 +35,8 @@ Branches:
 
 *   check out master for the latest changes, this is the beta branch, all functions may not work
 *   check out milestone for stable releases, works well but may not have all features
+
+Possible Known Bugs
+
+*   Physics Being Jank, it usually works well but there are sometimes it messes up real bad, usually caused by sprites pushing each other around
+*   Wrong project directory, if in the console it says it couldn't find any saveGame files or level files, please ensure that the working directory of the project is set to folder that contains directly contains 'src'
